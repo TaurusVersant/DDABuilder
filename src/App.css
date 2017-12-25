@@ -1,0 +1,237 @@
+/* Default React CSS */
+
+.App {
+	/* text-align: center; */
+}
+
+.App-logo {
+	animation: App-logo-spin infinite 20s linear;
+	height: 80px;
+}
+
+.App-logo-still {
+	height: 80px;
+}
+
+.App-header {
+	background-color: #222;
+	height: 150px;
+	padding: 20px;
+	color: white;
+}
+
+.App-title {
+	font-size: 1.5em;
+}
+
+.App-intro {
+	font-size: large;
+}
+
+@keyframes App-logo-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* Digimon - Digital Adventure CSS */
+
+body {
+	background-color: #dddddd;
+}
+
+div.pane  {
+	background-color: #eeeeee;
+	margin-left: 100px;
+	margin-right: 100px;
+	min-width: 1200px;
+	max-width: 1200px;
+	min-height: 600px;
+	padding-bottom: 5px;
+}
+
+span.labelTag {
+	width: 150px;
+	display: inline-block;
+	text-align: center;
+	margin-left: 5px;
+	font-weight: bold;
+}
+
+select.labelInput {
+	width: 173px;
+}
+
+td.tableRow {
+	text-align: center;
+	width: 100px;
+}
+
+div.divRow {
+	display: flex;
+}
+
+div.firstColumn {
+	width: 500px;
+}
+
+div.secondColumn {
+	flex-grow: 1;
+}
+
+span.labelValue {
+	margin: 10px;
+}
+
+textArea.detailsTextArea {
+	margin: 10px;
+	width: 95%;
+	height: 150px;
+}
+
+input.woundbox {
+	transform: scale(4);
+	margin: 30px;
+}
+
+input.woundbox:checked + label {
+    background: black;
+}
+
+ul.dataListing {
+	margin-left: -20px;
+	display: inline-block;
+}
+
+td.tableRowTags {
+	text-align: center;
+	width: 170px;
+}
+
+th.qualityHeader {
+	border-bottom: dotted;
+	border-width: 5px;
+}
+
+td.qualityDesc {
+	text-align: center;
+	border-bottom: dotted;
+	border-width: 5px;
+}
+
+tr.qualityRow>td {
+	padding-bottom: 10px;
+}
+
+img.digimonImage {
+	max-width: 500px;
+}
+
+button.roundedButton {
+	border-radius: 20px;
+	font-size: 10px;
+	color: red;
+}
+
+p.attackTagList {
+	padding-left: 20px;
+	text-align: left;
+	padding-bottom: -10px;
+}
+
+/*
+ * https://webdesign.tutsplus.com/articles/how-to-create-a-modern-ribbon-banner-navigation-bar-with-pure-htmlcss3--webdesign-2728
+ */
+ul.navigation {
+	padding: 10px;
+	background-color: #eeeeee;
+	padding-bottom: 45px;
+	width: 1180px;
+	margin-left: 100px;
+}
+
+ul.navigation li {
+	list-style: none;
+	float: left;
+	border: solid;
+	border-color: #dddddd;
+	padding: 5px;
+}
+
+ul.navigation li button {
+	font-weight: bold;
+	margin: 0 .5em;
+	border: none;
+	background-color: #eeeeee;
+}
+
+ul.navigation li button:hover {
+	margin-top: 2px;
+}
+
+ul.navigation li.selected {
+	border-color: black;
+}
+
+.hidden {
+	display: none;
+}
+
+button.addStage {
+	float: left;
+	margin-top: 12px;
+	margin-left: 20px;
+	height: 30px;
+}
+
+/*
+ * https://www.w3schools.com/howto/howto_css_modals.asp
+ */
+
+/* The Modal (background) */
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto; /* 15% from the top and centered */
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%; /* Could be more or less, depending on screen size */
+	height: 600px;
+	overflow: scroll;
+}
+
+.appModal-content {
+	text-align: center;
+	background-color: #fefefe;
+	margin: 15% auto; /* 15% from the top and centered */
+	padding: 20px;
+	border: 1px solid #888;
+	width: 20%; /* Could be more or less, depending on screen size */
+	height: 170px;
+}
+
+/* The Close Button */
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
