@@ -6,6 +6,8 @@ import { RibbonMenu } from './js/HtmlComponents.js';
 
 var DigimonObjects = require('./js/DigimonObjects.js');
 var DigimonData = require('./js/DigimonData.js');
+var DigimonStages = DigimonData.DigimonStages;
+var DigimonSizes = DigimonData.DigimonSizes;
 
 // Create a DigimonLine object and store it in the App
 // Pass the DigimonLine into the DigimonPane to populate it
@@ -22,20 +24,6 @@ class App extends React.Component {
 			characters: [newDigimon],
 			selectedIndex: 0
 		}
-	}
-
-	componentDidUpdate () {
-		/*let characterRibbon = document.getElementById('characterRibbon');
-
-		for (let i in characterRibbon.children) {
-			if (characterRibbon.children[i].nodeName === 'LI') {
-				characterRibbon.children[i].classList.remove('selected');
-			}
-		}
-
-		if (characterRibbon.children[this.state.characters.length-1]) {
-			characterRibbon.children[this.state.characters.length-1].classList.add('selected');
-		}*/
 	}
 
 	componentDidMount () {
@@ -98,12 +86,18 @@ class App extends React.Component {
 			let updatedCharacters = characterList.filter(function(character) { return character !== characterList[index] });
 			//let updatedCharacters = characterList.splice(index, 1);
 
+			if (updatedCharacters[updatedCharacters.length-1] !== undefined) {
+				updatedCharacters[updatedCharacters.length-1].onSwapTo();
+			}
+
 			this.setState({
 				characters: updatedCharacters,
 				selectedIndex: updatedCharacters.length-1
 			});
 		} else {
 			//console.log('Swapping to: ' + this.state.characters[index].toString());
+			this.state.characters[index].onSwapTo();
+
 			this.setState({
 				selectedIndex: index
 			});
@@ -156,32 +150,112 @@ class App extends React.Component {
 				<hr/>
 				<RibbonMenu id='characterRibbon' values={ribbonCharacters} selectedIndex={this.state.selectedIndex} onClick={this.changePane.bind(this)} />
 				<div className = 'pane'>
-					{this.createDigimon(this.state.characters[this.state.selectedIndex])}
+					{this.getPane()}
 				</div>
+
+				{this.getDebug()}
 			</div>
 		);
 	}
 
-	createDigimon (digimon) {
-		return <DigimonPane digimon={digimon} />;
+	getDebug () {
+		let currentCharacter = this.state.characters[this.state.selectedIndex];
+		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
+			switch (currentCharacter.getClass()) {
+				case 'Digimon':
+					return <DigimonDebug digimon={currentCharacter} />;
+				default:
+					alert(currentCharacter.getClass() + " not defined.");
+			}
+		}
+		return '';
+	}
+
+	getPane () {
+		let currentCharacter = this.state.characters[this.state.selectedIndex];
+
+		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
+			switch (currentCharacter.getClass()) {
+				case 'Digimon':
+					return <DigimonPane digimon={currentCharacter} />;
+				default:
+					alert(currentCharacter.getClass() + " not defined.");
+			}
+		}
+		return '';
 	}
 }
 
-class Pane extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = { character: this.props.character };
-	}
-
-	componentWillReceiveProps(props) {
-		this.setState({character: props.character});
+/** Debug Code **/
+class DigimonDebug extends React.Component {
+	componentDidMount () {
+		setInterval(() => {
+			this.setState(() => {
+				return { unseen: 'does not display' }
+			});
+		}, 500);
 	}
 
 	render () {
-		let paneObject = this.state.character.constructor.name === 'DigimonLine' ? <DigimonPane digimon={this.state.character}/> : '';
+		var stage = this.props.digimon.getProperty('stage');
+		var sizeIndex = this.props.digimon.getProperty('sizeIndex');
+		var stageStats = DigimonStages[stage];
+		var sizeStats = DigimonSizes[sizeIndex];
+
 		return (
-			<div className = 'pane'>
-				{paneObject}
+			<div className='pane' id='debugPane'>
+				<h3>Stat Calculations (Round Down Always)</h3>
+				<ul>
+					<li><b>Wound Boxes:</b> Health + Stage Bonus</li>
+					<li><b>Agility:</b> (Accuracy + Dodge)/2</li>
+					<li><b>Body:</b> (Health + Damage + Armor)/3 + Size Bonus</li>
+					<li><b>Brains:</b> Accuracy/2 + Stage Bonus</li>
+					<li><b>BIT Value:</b> Brains/10 + Stage Bonus</li>
+					<li><b>CPU Value:</b> Body/10 + Stage Bonus</li>
+					<li><b>RAM Value:</b> Agility/10 + Stage Bonus</li>
+				</ul>
+				<h3>Stage Details</h3>
+				<table>
+					<tbody>
+						<tr>
+							<th>Stage</th>
+							<th>Starting DP</th>
+							<th>Base Movement</th>
+							<th>Wound Boxes</th>
+							<th>Brains</th>
+							<th>Attacks</th>
+							<th>Spec Values</th>
+						</tr>
+						<tr>
+							<td className='tableRow'>{stageStats.id}</td>
+							<td className='tableRow'>{stageStats.startingDP}</td>
+							<td className='tableRow'>{stageStats.baseMovement}</td>
+							<td className='tableRow'>{stageStats.woundBoxes}</td>
+							<td className='tableRow'>{stageStats.brains}</td>
+							<td className='tableRow'>{stageStats.attacks}</td>
+							<td className='tableRow'>{stageStats.specValues}</td>
+						</tr>
+					</tbody>
+				</table>
+				<h3>Size Details</h3>
+				<table>
+					<tbody>
+						<tr>
+							<th>Size</th>
+							<th>Area</th>
+							<th>Square Meters</th>
+							<th>Body Bonus</th>
+							<th>Extra</th>
+						</tr>
+						<tr>
+							<td className='tableRow'>{sizeStats.id}</td>
+							<td className='tableRow'>{sizeStats.area}</td>
+							<td className='tableRow'>{sizeStats.squareMeters}</td>
+							<td className='tableRow'>{sizeStats.bodyBonus}</td>
+							<td className='tableRow'>{sizeStats.notes}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		);
 	}

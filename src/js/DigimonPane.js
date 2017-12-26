@@ -105,7 +105,7 @@ class WoundBoxesElement extends React.Component {
 			checked = i < this.props.health ? false : true;
 			woundBoxes.push(<input key={'wound_' + i} className='woundbox' type='checkbox' checked={checked} onClick={this.props.onClick} />);
 
-			if ((i+1)%6 === 0) {
+			if ((i+1)%10 === 0) {
 				woundBoxes.push(<br key={'br_' + i}/>);
 			}
 		}
@@ -803,7 +803,8 @@ class DigimonPane extends React.Component {
 				break;
 			case 'stage':
 				var digimonStage = document.getElementById('digimonStage');
-				digimonStage.selectedIndex = Object.keys(DigimonStages).indexOf(currentDigimon.getProperty('stage'));
+				digimonStage.value = currentDigimon.getProperty('stage');
+				//digimonStage.selectedIndex = Object.keys(DigimonStages).indexOf(currentDigimon.getProperty('stage'));
 				break;
 			case 'attributeIndex':
 				var digimonAttributeField = document.getElementById('digimonAttribute');
@@ -827,7 +828,7 @@ class DigimonPane extends React.Component {
 	/**
 	 * Refreshes the Pane when a field of the DigimonLine object is modified
 	 */
-	onDigimonStageChange (event) {
+	/*onDigimonStageChange (event) {
 		let index = event.target.selectedIndex;
 		let currentIndex = DigimonStageOrder.indexOf(this.state.digimon.getProperty('stage'));
 
@@ -856,7 +857,7 @@ class DigimonPane extends React.Component {
 				this.updateStateDetails(() => { });
 			}, 100);
 		}
-	}
+	}*/
 	
 	/**
 	 * Refreshes the Pane when a field of the Digimon object active in the DigimonLine is modified
@@ -1048,8 +1049,11 @@ class DigimonPane extends React.Component {
 				<h1 id='digimonTitle'>{this.state.digimon.getProperty('name')}</h1>
 				<div className='divRow'>
 					<div className='firstColumn'>
-						<HtmlComponents.ArraySelect values={digimonStageSelect} id='digimonStage' tag='Stage:'
-						onChange={this.onDigimonStageChange.bind(this)} />
+						<p>
+							<span className='labelTag'>Stage:</span>
+							<input readOnly='true' className='labelInput' id='digimonStage'
+								defaultValue={this.state.digimon.getProperty('stage')} />
+						</p>
 						<p>
 							<span className='labelTag'>Digi-Points:</span>
 							<button onClick={this.modifyDigiPoints.bind(this, false)}>-</button>
@@ -1081,13 +1085,6 @@ class DigimonPane extends React.Component {
 
 						<HtmlComponents.ArraySelect values={DigimonSizes} id='digimonSize' tag='Size:'
 							onChange={this.onDigimonStageFieldChange.bind(this, 'sizeIndex', 'selectedIndex')} />
-
-						<WoundBoxesElement
-							health={this.state.digimon.getProperty('woundBoxes')}
-							maxHealth={this.state.digimon.getWoundBoxesStat()}
-							onClick={this.updateWounds.bind(this)}
-						/>
-
 					</div>
 
 					<div className='secondColumn'>
@@ -1097,6 +1094,12 @@ class DigimonPane extends React.Component {
 						<img className='digimonImage' alt='' src={this.state.digimon.getProperty('digimonImage')} />
 					</div>
 				</div>
+
+				<WoundBoxesElement
+					health={this.state.digimon.getProperty('woundBoxes')}
+					maxHealth={this.state.digimon.getWoundBoxesStat()}
+					onClick={this.updateWounds.bind(this)}
+				/>
 
 				<div className='divRow'>
 					<div className='firstColumn'>
@@ -1137,88 +1140,9 @@ class DigimonPane extends React.Component {
 					<textarea className='detailsTextArea' id='digimonDetails'
 						onBlur={this.onDigimonStageFieldChange.bind(this, 'details', 'value')} />
 				</div>
-
-				{debug === true ? <DigimonDebug digimonLine={this.state.digimon} /> : null}
 			</div>
 		);
 	}
 }
-
-/** Debug Code **/
-class DigimonDebug extends React.Component {
-	componentDidMount () {
-		setInterval(() => {
-			this.setState(() => {
-				return { unseen: 'does not display' }
-			});
-		}, 500);
-	}
-
-	render () {
-		var stage = this.props.digimonLine.getProperty('stage');
-		var sizeIndex = this.props.digimonLine.getProperty('sizeIndex');
-		var stageStats = DigimonStages[stage];
-		var sizeStats = DigimonSizes[sizeIndex];
-
-		return (
-			<div className='pane' id='debugPane'>
-				<h3>Stat Calculations (Round Down Always)</h3>
-				<ul>
-					<li><b>Wound Boxes:</b> Health + Stage Bonus</li>
-					<li><b>Agility:</b> (Accuracy + Dodge)/2</li>
-					<li><b>Body:</b> (Health + Damage + Armor)/3 + Size Bonus</li>
-					<li><b>Brains:</b> Accuracy/2 + Stage Bonus</li>
-					<li><b>BIT Value:</b> Brains/10 + Stage Bonus</li>
-					<li><b>CPU Value:</b> Body/10 + Stage Bonus</li>
-					<li><b>RAM Value:</b> Agility/10 + Stage Bonus</li>
-				</ul>
-				<h3>Stage Details</h3>
-				<table>
-					<tbody>
-						<tr>
-							<th>Stage</th>
-							<th>Starting DP</th>
-							<th>Base Movement</th>
-							<th>Wound Boxes</th>
-							<th>Brains</th>
-							<th>Attacks</th>
-							<th>Spec Values</th>
-						</tr>
-						<tr>
-							<td className='tableRow'>{stageStats.id}</td>
-							<td className='tableRow'>{stageStats.startingDP}</td>
-							<td className='tableRow'>{stageStats.baseMovement}</td>
-							<td className='tableRow'>{stageStats.woundBoxes}</td>
-							<td className='tableRow'>{stageStats.brains}</td>
-							<td className='tableRow'>{stageStats.attacks}</td>
-							<td className='tableRow'>{stageStats.specValues}</td>
-						</tr>
-					</tbody>
-				</table>
-				<h3>Size Details</h3>
-				<table>
-					<tbody>
-						<tr>
-							<th>Size</th>
-							<th>Area</th>
-							<th>Square Meters</th>
-							<th>Body Bonus</th>
-							<th>Extra</th>
-						</tr>
-						<tr>
-							<td className='tableRow'>{sizeStats.id}</td>
-							<td className='tableRow'>{sizeStats.area}</td>
-							<td className='tableRow'>{sizeStats.squareMeters}</td>
-							<td className='tableRow'>{sizeStats.bodyBonus}</td>
-							<td className='tableRow'>{sizeStats.notes}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		);
-	}
-}
-
-var debug = true;
 
 export { DigimonPane }

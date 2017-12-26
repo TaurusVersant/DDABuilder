@@ -1,11 +1,11 @@
-/* Digimon Digital Adventure v1.2 Data */
+/* Digimon Digital Adventures Digimon */
 
 var DigimonData = require('./DigimonData.js');
 
 var DigimonStages = DigimonData.DigimonStages;
 var DigimonSizes = DigimonData.DigimonSizes;
 var DigimonStats = DigimonData.DigimonStats;
-//console.log(Object.keys(DigimonQualities).length);
+var DigimonQualitiesDigizoid = DigimonData.DigimonQualitiesDigizoid;
 
 /**
  * Digimon Objects act as storage elements for a single Digimon Stage
@@ -85,6 +85,8 @@ class Digimon {
 		this.woundBoxes = this.derivedStats['Wound Boxes'];
 		this.extraMovementTypes = [];
 		this.buildMovement();
+
+		this.onSwapTo();
 	}
 
 	/**
@@ -454,23 +456,10 @@ class Digimon {
 	 * setter method for the Digimon
 	 */
 	setProperty (propertyName, value) {
-		let previousStage = propertyName === 'stage' ? this.stage : '';
-
 		this[propertyName] = value;
 
-		switch (propertyName) {
-			case 'sizeIndex':			
-				this.buildDerivedStats();
-				break;
-			case 'stage':					
-				this.buildDerivedStats();
-				this.buildMovement();
-				this.woundBoxes = this.derivedStats['Wound Boxes'];
-
-				this.digiPoints += DigimonStages[this.stage].startingDP - DigimonStages[previousStage].startingDP;
-				this.totalDigiPoints = DigimonStages[this.stage].startingDP + this.totalDigiPoints - DigimonStages[previousStage].startingDP;
-				break;
-			default:
+		if (propertyName === 'sizeIndex') {
+			this.buildDerivedStats();
 		}
 	}
 
@@ -573,8 +562,26 @@ class Digimon {
 		}
 	}
 
+	/**
+	 * Function to be called to update values necessary when this digimon object is swapped to
+	 */
+	onSwapTo () {
+		let DigimonStageOrder = Object.keys(DigimonStages);
+		let megaOrGreater = DigimonStageOrder.indexOf(this.stage) >= DigimonStageOrder.indexOf('Mega');
+		if (megaOrGreater && DigimonQualitiesDigizoid['Chrome Digizoid Armor'].cost === 1) {
+			DigimonData.digizoidDiscount(true);
+		}
+		else if (!megaOrGreater && DigimonQualitiesDigizoid['Chrome Digizoid Armor'].cost === 0) {
+			DigimonData.digizoidDiscount(false);
+		}
+	}
+
 	toString () {
 		return this.name;
+	}
+
+	getClass () {
+		return 'Digimon';
 	}
 }
 
