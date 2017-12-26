@@ -113,6 +113,14 @@ textArea.detailsTextArea {
 	height: 150px;
 }
 
+table#digimonQualityTable {
+	display: block;
+	border-style: dotted solid;
+	border-color: #dddddd;
+	overflow: auto;
+	max-height: 500px;
+}
+
 td.tableRow {
 	text-align: center;
 	width: 100px;

@@ -493,7 +493,8 @@ class DigimonQualityList extends React.Component {
 		return (
 			<div>
 				<p><u>Digimon Qualities</u></p>
-				<table><tbody>
+				<table id='digimonQualityTable'>
+				<thead>
 					<tr>
 						<th>Quality</th>
 						<th>Rank</th>
@@ -501,6 +502,8 @@ class DigimonQualityList extends React.Component {
 						<th>Details</th>
 						<th>Remove</th>
 					</tr>
+				</thead>
+				<tbody>
 					{purchaseMap}
 				</tbody></table>
 				<br/>
