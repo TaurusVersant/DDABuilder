@@ -1,24 +1,30 @@
 import React from 'react';
 import logo from './digivice.png';
 import './App.css';
+
 import { DigimonPane } from './js/DigimonPane.js';
+import { DigimonSizes } from './js/DigimonData.js';
+import { DigimonStages } from './js/DigimonData.js';
 import { RibbonMenu } from './js/HtmlComponents.js';
 
-var DigimonObjects = require('./js/DigimonObjects.js');
-var DigimonData = require('./js/DigimonData.js');
-var DigimonStages = DigimonData.DigimonStages;
-var DigimonSizes = DigimonData.DigimonSizes;
+let Digimon = require('./js/Digimon.js');
 
-// Create a DigimonLine object and store it in the App
-// Pass the DigimonLine into the DigimonPane to populate it
-
+/**
+ * Container Class for the Project
+ */
 class App extends React.Component {
+	/**		
+	 * Sets title and builds state
+	 *
+	 * state.characters - array of Digimon and Human objects
+	 * state.selectedIndex - index of state.characters which is active
+	 */
 	constructor (props) {
 		super(props);
 
 		document.title = 'DDA v1.2 Builder'
 
-		let newDigimon = DigimonObjects.createDigimon('Fresh', 'Botamon');
+		let newDigimon = Digimon.createDigimon('Fresh', 'Botamon');
 		
 		this.state = {
 			characters: [newDigimon],
@@ -26,6 +32,9 @@ class App extends React.Component {
 		}
 	}
 
+	/**
+	 * Adds event listeners to modal buttons and window for showing/hiding modal divs
+	 */
 	componentDidMount () {
 		let addHumanModal = document.getElementById('addHumanModal');
 		document.getElementById('addHumanButton').onclick = function() {
@@ -38,7 +47,6 @@ class App extends React.Component {
 		}
 
 		// When the user clicks anywhere outside of the modal, close it
-
 		window.addEventListener('click', function (event){
 			switch (event.target.id) {
 				case 'addHumanModal':
@@ -52,50 +60,64 @@ class App extends React.Component {
 		});
 	}
 
+	/**
+	 * Creates and adds a new Human to the state.characters array
+	 */
 	addHuman () {
 		console.log('Adding a human!');
 	}
 
+	/**
+	 * Creates and adds a new Digimon to the state.characters array
+	 */
 	addDigimon () {
+		// get Digimon name
 		let digimonNameInput = document.getElementById('addDigimonName');
 		let digimonName = digimonNameInput.value.trim();
 
 		if (digimonName.length) {
+			// if the name is set, get the stage and create a Digimon object
 			let digimonStageSelect = document.getElementById('addDigimonStage');
 			let digimonStage = digimonStageSelect.options[digimonStageSelect.selectedIndex].value;
-			let newDigimon = DigimonObjects.createDigimon(digimonStage, digimonName);
+			let newDigimon = Digimon.createDigimon(digimonStage, digimonName);
 
+			// update the state with the new Digimon
 			let updatedCharacters = this.state.characters.concat([newDigimon]);
 			this.setState({
 				characters: updatedCharacters,
 				selectedIndex: updatedCharacters.length-1
 			});
 
+			// Reset the Digimon name and stage fields
 			digimonNameInput.value = '';
 			digimonStageSelect.selectedIndex = 0;
 
+			// hide the Add Digimon Modal
 			document.getElementById('addDigimonModal').classList.add('hidden');
-			//setTimeout(() => {}, 100, newDigimon);
 		}
 	}
 
+	/**
+	 * Swaps the active character when the element the changePane function is bound to is clicked
+	 * or removes the character if the removeFlag is true
+	 */
 	changePane (index, removeFlag = false, event) {
 		if (removeFlag) {
-			// TODO: WHY IS SPLICE BROKEN
+			// get the state.characters array and remove the character specified by the index of the clicked button from it
 			let characterList = this.state.characters;
 			let updatedCharacters = characterList.filter(function(character) { return character !== characterList[index] });
+
+			// TODO: WHY IS SPLICE BROKEN
 			//let updatedCharacters = characterList.splice(index, 1);
 
-			if (updatedCharacters[updatedCharacters.length-1] !== undefined) {
-				updatedCharacters[updatedCharacters.length-1].onSwapTo();
-			}
+			let updatedIndex = this.state.selectedIndex !== 0 ? this.state.selectedIndex-1 : 0;
 
 			this.setState({
 				characters: updatedCharacters,
-				selectedIndex: updatedCharacters.length-1
+				selectedIndex: updatedIndex
 			});
 		} else {
-			//console.log('Swapping to: ' + this.state.characters[index].toString());
+			// changes to the character specified by the index property
 			this.state.characters[index].onSwapTo();
 
 			this.setState({
@@ -105,21 +127,23 @@ class App extends React.Component {
 	}
 
 	render () {
+		// digimonStageSelect is used to choose a Digimon Stage in the add Digimon Modal
 		let digimonStageSelect = [];
-		for (let digimonStage in DigimonData.DigimonStages) {
+		for (let digimonStage in DigimonStages) {
 			digimonStageSelect.push(<option key={digimonStage} value={digimonStage}>{digimonStage}</option>)
 		}
 
+		// ribbonCharacters is an array of all character names used to popular the Character Select Ribbon
 		let ribbonCharacters = [];
-		for (let i in this.state.characters) {
-			ribbonCharacters.push(this.state.characters[i].toString());
+		for (let index in this.state.characters) {
+			ribbonCharacters.push(this.state.characters[index].toString());
 		}
 
 		return (
 			<div className='App'>
 				<header className='App-header'>
 					<img src={logo} className='App-logo-still' alt='logo' />
-					<h1 className='App-title'>Digimon Digital Adventure v1.2 Character Builder</h1>
+					<h1 className='App-title'>Digimon Digital Adventures v1.2 Character Builder</h1>
 				</header>
 
 				<div id='addHumanModal' className='modal hidden'>
@@ -144,11 +168,21 @@ class App extends React.Component {
 						<button type='button' onClick={this.addDigimon.bind(this)}>Create!</button>
 					</div>
 				</div>
+
 				<hr/>
-				<button id='addHumanButton' type='button'>Add Human</button>
-				<button id='addDigimonButton' type='button'>Add Digimon</button>
+				<div className='addCharacterButtons'>
+					<button id='addHumanButton' type='button'>Add Human</button>
+					<button id='addDigimonButton' type='button'>Add Digimon</button>
+				</div>
 				<hr/>
-				<RibbonMenu id='characterRibbon' values={ribbonCharacters} selectedIndex={this.state.selectedIndex} onClick={this.changePane.bind(this)} />
+
+				<RibbonMenu
+					id='characterRibbon'
+					values={ribbonCharacters}
+					selectedIndex={this.state.selectedIndex}
+					onClick={this.changePane.bind(this)}
+				/>
+
 				<div className = 'pane'>
 					{this.getPane()}
 				</div>
@@ -158,28 +192,29 @@ class App extends React.Component {
 		);
 	}
 
+	/**
+	 * Builds a debug pane depending on the active character and returns it to the render method
+	 */
 	getDebug () {
 		let currentCharacter = this.state.characters[this.state.selectedIndex];
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
-				case 'Digimon':
-					return <DigimonDebug digimon={currentCharacter} />;
-				default:
-					alert(currentCharacter.getClass() + " not defined.");
+				case 'Digimon': return <DigimonDebug digimon={currentCharacter} />;
+				default: alert(currentCharacter.getClass() + " not defined.");
 			}
 		}
 		return '';
 	}
 
+	/**
+	 * Builds a character pane depending on the active character and returns it to the render method
+	 */
 	getPane () {
 		let currentCharacter = this.state.characters[this.state.selectedIndex];
-
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
-				case 'Digimon':
-					return <DigimonPane digimon={currentCharacter} />;
-				default:
-					alert(currentCharacter.getClass() + " not defined.");
+				case 'Digimon': return <DigimonPane digimon={currentCharacter} />;
+				default: alert(currentCharacter.getClass() + " not defined.");
 			}
 		}
 		return '';
@@ -188,6 +223,9 @@ class App extends React.Component {
 
 /** Debug Code **/
 class DigimonDebug extends React.Component {
+	/**
+	 * Refreshes debug every half second to update debug display
+	 */
 	componentDidMount () {
 		setInterval(() => {
 			this.setState(() => {

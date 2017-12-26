@@ -49,23 +49,6 @@ div.pane  {
 	padding-bottom: 5px;
 }
 
-span.labelTag {
-	width: 150px;
-	display: inline-block;
-	text-align: center;
-	margin-left: 5px;
-	font-weight: bold;
-}
-
-select.labelInput {
-	width: 173px;
-}
-
-td.tableRow {
-	text-align: center;
-	width: 100px;
-}
-
 div.divRow {
 	display: flex;
 }
@@ -78,14 +61,26 @@ div.secondColumn {
 	flex-grow: 1;
 }
 
+div.addCharacterButtons {
+	margin-left: 100px;
+}
+
+span.labelTag {
+	width: 150px;
+	display: inline-block;
+	text-align: center;
+	margin-left: 5px;
+	font-weight: bold;
+}
+
 span.labelValue {
 	margin: 10px;
 }
 
-textArea.detailsTextArea {
-	margin: 10px;
-	width: 95%;
-	height: 150px;
+p.attackTagList {
+	padding-left: 20px;
+	text-align: left;
+	padding-bottom: -10px;
 }
 
 input.woundbox {
@@ -97,14 +92,35 @@ input.woundbox:checked + label {
     background: black;
 }
 
-ul.dataListing {
-	margin-left: -20px;
-	display: inline-block;
+button.roundedButton {
+	border-radius: 20px;
+	font-size: 10px;
+	color: red;
+}
+
+select.labelInput {
+	width: 173px;
+}
+
+textArea.detailsTextArea {
+	margin: 10px;
+	width: 95%;
+	height: 150px;
+}
+
+td.tableRow {
+	text-align: center;
+	width: 100px;
 }
 
 td.tableRowTags {
 	text-align: center;
 	width: 170px;
+}
+
+ul.dataListing {
+	margin-left: -20px;
+	display: inline-block;
 }
 
 th.qualityHeader {
@@ -124,18 +140,6 @@ tr.qualityRow>td {
 
 img.digimonImage {
 	max-width: 500px;
-}
-
-button.roundedButton {
-	border-radius: 20px;
-	font-size: 10px;
-	color: red;
-}
-
-p.attackTagList {
-	padding-left: 20px;
-	text-align: left;
-	padding-bottom: -10px;
 }
 
 /*
