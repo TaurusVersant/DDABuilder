@@ -64,7 +64,7 @@ class ArraySelect extends React.Component {
 		return (
 			<p>
 				<span className="labelTag">{this.props.tag}</span>
-				<select className="labelInput" id={this.props.id} onChange={this.props.onChange}>
+				<select className="labelInput" id={this.props.id} onChange={this.props.onChange} defaultValue={this.props.defaultValue.id}>
 					{items}
 				</select>
 			</p>

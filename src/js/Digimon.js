@@ -18,7 +18,6 @@ var DigimonQualitiesDigizoid = DigimonData.DigimonQualitiesDigizoid;
  *	@digiPoints 		- int identifying the Digimon's available digiPoints. Starts reduced by 5 to cover the mandatory +1 for all stats
  *	@totalDigiPoints	- int identifying the Digimon's maximum digiPoints
  *	@details 			- string containing extra details for the Digimon
- *	@imageLocation 		- path to the image being used to represent the Digimon
  *	@digimonFamilies 	- array of strings containing the Families a Digimon is part of
  *	@digimonTypes 		- array of strings containing the Types a Digimon is
  *	@stats				- object recording the five stats of a digimon, Health, Accuracy, Damage, Dodge, Armor
@@ -33,6 +32,7 @@ class Digimon {
 	 * takes a stage, identifying the Digimon's Stage, and initialises default values for all stats based on Stage
 	 */
 	constructor (stage, name) {
+		this.class = 'Digimon';
 		this.name = name;
 		this.stage = stage;
 		this.attributeIndex = 0;
@@ -42,7 +42,6 @@ class Digimon {
 		this.totalDigiPoints = DigimonStages[this.stage].startingDP;
 
 		this.details = "";
-		this.imageLocation = null;
 
 		this.digimonFamilies = [];
 		this.digimonTypes = [];
@@ -89,57 +88,7 @@ class Digimon {
 		this.onSwapTo();
 	}
 
-	/**
-	 * Restrictions are Qualities that can only increase a stat by a specific amount
-	 * This code handles ensuring restrictions are correctly applied
-	 */
-	handleRestriction (stat, statName) {
-		var qualityName = null;
-		var restrictionLimit = 1; // number of times greater the stat may grow than its base
-		var restrictionModifier = 1; // value to increment stat by per quality rank
-
-		switch (statName) {
-			case 'BaseMovement':
-				qualityName = 'Speedy';
-				restrictionLimit = this.qualities.indexOf('Advanced Mobility - Movement') === -1 ? 1 : 2;
-				restrictionModifier = 2;
-				break;
-			case 'BIT Value':
-				qualityName = 'System Boost - BIT Value';
-				break;
-			case 'CPU Value':
-				qualityName = 'System Boost - CPU Value';
-				break;
-			case 'RAM Value':
-				qualityName = 'System Boost - RAM Value';
-				break;
-			default:
-				break;
-		}
-
-		if (this.qualityRanks.hasOwnProperty(qualityName) === true) {
-			if (qualityName === 'Speedy') {
-				this.checkSpeedyMax(this.qualityRanks[qualityName] + 1, stat);
-			}
-
-			if (this.qualityRanks[qualityName] * restrictionModifier <= stat * restrictionLimit) {
-				stat += this.qualityRanks[qualityName] * restrictionModifier;
-			} else {
-				// code logic ensures that the modifier is always even rounded down
-				var modifierValue = stat * restrictionLimit;
-				stat += modifierValue - (modifierValue % restrictionModifier);
-			}
-		}
-
-		return stat;
-	}
-
-	/**
-	 * Sets the flag indicating the speedy quality has maxed out if twice the speedyRanks is greater than or equal to the baseMovement
-	 */
-	checkSpeedyMax (speedyRanks, baseMovement) {
-		this.qualityFlags['speedyMax'] = speedyRanks * 2 > baseMovement;
-	}
+	/** STAT CONTROLLING FUNCTIONS **/
 
 	/**
 	 * builds all movement properties, eg: jump speed, swim speed, based on Digimon Stage and Qualities
@@ -244,6 +193,109 @@ class Digimon {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Retrieves the Wound Boxes derived stat from the Digimon, necessary as the "Maximum Wound Boxes"
+	 */
+	getWoundBoxesStat () {
+		return this.derivedStats["Wound Boxes"];
+	}
+
+	/**
+	 * Takes a reduceFlag, which if true will reduce the Digimon's woundBoxes by 1
+	 * and if false, increase it by 1
+	 */
+	changeHealth (reduceFlag) {
+		if (reduceFlag) {
+			this.woundBoxes -= 1;
+		}
+		else {
+			this.woundBoxes += 1;
+		}
+	}
+
+	/**
+	 * Increases the total number of DigiPoints or reduces if the Digimon has at least one digipoint and more than its starting total
+	 */
+	modifyDigiPoints (increaseFlag) {
+		if (increaseFlag) {
+			this.digiPoints += 1;
+			this.totalDigiPoints += 1;
+		} else if (this.digiPoints !== 0 && this.totalDigiPoints > DigimonStages[this.stage].startingDP) {
+			this.digiPoints -= 1;
+			this.totalDigiPoints -= 1;
+		}
+	}
+
+	/** QUALITY CONTROLLING FUNCTIONS **/
+
+	/**
+	 * Restrictions are Qualities that can only increase a stat by a specific amount
+	 * This code handles ensuring restrictions are correctly applied
+	 */
+	handleRestriction (stat, statName) {
+		var qualityName = null;
+		var restrictionLimit = 1; // number of times greater the stat may grow than its base
+		var restrictionModifier = 1; // value to increment stat by per quality rank
+
+		switch (statName) {
+			case 'BaseMovement':
+				qualityName = 'Speedy';
+				restrictionLimit = this.qualities.indexOf('Advanced Mobility - Movement') === -1 ? 1 : 2;
+				restrictionModifier = 2;
+				break;
+			case 'BIT Value':
+				qualityName = 'System Boost - BIT Value';
+				break;
+			case 'CPU Value':
+				qualityName = 'System Boost - CPU Value';
+				break;
+			case 'RAM Value':
+				qualityName = 'System Boost - RAM Value';
+				break;
+			default:
+				break;
+		}
+
+		if (this.qualityRanks.hasOwnProperty(qualityName) === true) {
+			if (qualityName === 'Speedy') {
+				this.checkSpeedyMax(this.qualityRanks[qualityName] + 1, stat);
+			}
+
+			if (this.qualityRanks[qualityName] * restrictionModifier <= stat * restrictionLimit) {
+				stat += this.qualityRanks[qualityName] * restrictionModifier;
+			} else {
+				// code logic ensures that the modifier is always even rounded down
+				var modifierValue = stat * restrictionLimit;
+				stat += modifierValue - (modifierValue % restrictionModifier);
+			}
+		}
+
+		return stat;
+	}
+
+	/**
+	 * Validates that the Quality can be added or removed from the Digimon and if so, adds or removes it
+	 */
+	purchaseQuality (quality, qualityObject, removeFlag) {
+		var invalidMessage = this.purchaseStageQuality(quality, qualityObject, removeFlag);
+		switch (invalidMessage) {
+			case null:
+				this.setStageArrayProperty("qualities", quality, removeFlag);
+			case false:
+				let updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
+
+				this.buildDerivedStats();
+				this.buildMovement();
+
+				if (updateHealth) {
+					this.woundBoxes = this.derivedStats['Wound Boxes'];
+				}
+				break;
+			default:
+		}
+		return invalidMessage;
 	}
 
 	/**
@@ -446,83 +498,14 @@ class Digimon {
 	}
 
 	/**
-	 * getter method for the Digimon
+	 * Sets the flag indicating the speedy quality has maxed out if twice the speedyRanks is greater than or equal to the baseMovement
 	 */
-	getProperty (propertyName) {
-		return this[propertyName];
+	checkSpeedyMax (speedyRanks, baseMovement) {
+		this.qualityFlags['speedyMax'] = speedyRanks * 2 > baseMovement;
 	}
 
 	/**
-	 * setter method for the Digimon
-	 */
-	setProperty (propertyName, value) {
-		this[propertyName] = value;
-
-		if (propertyName === 'sizeIndex') {
-			this.buildDerivedStats();
-		}
-	}
-
-	/**
-	 * Retrieves the Wound Boxes derived stat from the Digimon, necessary as the "Maximum Wound Boxes"
-	 */
-	getWoundBoxesStat () {
-		return this.derivedStats["Wound Boxes"];
-	}
-
-	/**
-	 * Takes a reduceFlag, which if true will reduce the Digimon's woundBoxes by 1
-	 * and if false, increase it by 1
-	 */
-	changeHealth (reduceFlag) {
-		if (reduceFlag) {
-			this.woundBoxes -= 1;
-		}
-		else {
-			this.woundBoxes += 1;
-		}
-	}
-
-	/**
-	 * Takes a propertyName of the Digimon array property to adjust, either removing or adding the value
-	 * depending on the removeFlag being true or false
-	 *
-	 * Note: the value will only be added if it is unique
-	 */
-	setStageArrayProperty (propertyName, value, removeFlag) {
-		var valueIndex = this[propertyName].indexOf(value);
-
-		if (removeFlag === true && valueIndex !== -1) {
-			this[propertyName].splice(valueIndex, 1);
-		}
-		else if (removeFlag === false && valueIndex === -1) {
-			this[propertyName].push(value);
-		}
-	}
-
-	/**
-	 * Validates that the Quality can be added to this Digimon, and if so pays the cost
-	 */
-	purchaseQuality (quality, qualityObject, removeFlag) {
-		var invalidMessage = this.purchaseStageQuality(quality, qualityObject, removeFlag);
-		switch (invalidMessage) {
-			case null:
-				this.setStageArrayProperty("qualities", quality, removeFlag);
-			case false:
-				let updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
-
-				this.buildDerivedStats();
-				this.buildMovement();
-
-				if (updateHealth) {
-					this.woundBoxes = this.derivedStats['Wound Boxes'];
-				}
-				break;
-			default:
-		}
-		return invalidMessage;
-	}/**
-	 *
+	 * Adds or removes an attackTag from one of the Digimon's attacks
 	 */
 	applyAttackTag (index, tagName, removeTag = false) {
 		let attacks = this.getProperty('attacks');
@@ -548,22 +531,45 @@ class Digimon {
 		}
 	}
 
+	/** GENERAL FUNCTIONS **/
+
 	/**
-	 *
+	 * getter method for the Digimon
 	 */
-	modifyDigiPoints (increaseFlag) {
-		if (increaseFlag) {
-			this.digiPoints += 1;
-			this.totalDigiPoints += 1;
-		} else if (this.digiPoints !== 0 &&
-			this.totalDigiPoints > DigimonStages[this.stage].startingDP) {
-			this.digiPoints -= 1;
-			this.totalDigiPoints -= 1;
+	getProperty (propertyName) {
+		return this[propertyName];
+	}
+
+	/**
+	 * setter method for the Digimon
+	 */
+	setProperty (propertyName, value) {
+		this[propertyName] = value;
+
+		if (propertyName === 'sizeIndex') {
+			this.buildDerivedStats();
 		}
 	}
 
 	/**
-	 * Function to be called to update values necessary when this digimon object is swapped to
+	 * Takes a propertyName of the Digimon array property to adjust, either removing or adding the value
+	 * depending on the removeFlag being true or false
+	 *
+	 * Note: the value will only be added if it is unique
+	 */
+	setStageArrayProperty (propertyName, value, removeFlag) {
+		var valueIndex = this[propertyName].indexOf(value);
+
+		if (removeFlag === true && valueIndex !== -1) {
+			this[propertyName].splice(valueIndex, 1);
+		}
+		else if (removeFlag === false && valueIndex === -1) {
+			this[propertyName].push(value);
+		}
+	}
+
+	/**
+	 * Function to be called to update values necessary when this Digimon object is swapped to
 	 */
 	onSwapTo () {
 		let DigimonStageOrder = Object.keys(DigimonStages);
@@ -576,12 +582,38 @@ class Digimon {
 		}
 	}
 
-	toString () {
-		return this.name;
+	/**
+	 * Builds a json string representing the Digimon object
+	 */
+	saveToJSON () {
+		let digimonJSON = JSON.stringify(this);
+
+		return digimonJSON;
 	}
 
+	/**
+	 * Populates the Digimon object from a json string
+	 */
+	loadFromJSON (digimonObject) {
+		//let digimonObject = JSON.parse(digimonJSON);
+
+		for (let property in digimonObject) {
+			this[property] = digimonObject[property];
+		}
+	}
+
+	/**
+	 * Identifies the class of this object
+	 */
 	getClass () {
-		return 'Digimon';
+		return this.class;
+	}
+
+	/**
+	 * Returns the name of this object
+	 */
+	toString () {
+		return this.name;
 	}
 }
 

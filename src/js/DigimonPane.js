@@ -356,7 +356,7 @@ class DigimonQualityList extends React.Component {
 	}
 
 	/**
-	 *
+	 * Ensures that the quality being considered can be aquired by this Digimon
 	 */
 	validateQuality (quality, qualityObject) {
 		// If the Quality requires a Stage and this Digimon is beneath that Stage, the Quality is not available
@@ -426,7 +426,7 @@ class DigimonQualityList extends React.Component {
 				}
 		}
 
-		// Ensures one of the pre-requisties are possessed for this quality
+		// Ensures one of the pre-requisites are possessed for this quality
 		let prereqs_passed = true;
 		for (let prereqQuality in qualityObject.prereqs) {
 			if (this.props.values.indexOf(prereqQuality) !== -1 &&
@@ -703,6 +703,9 @@ class DigimonPane extends React.Component {
 		}
 	}
 
+	/**
+	 * Updates the DigimonPane with a new Digimon object
+	 */
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			digimon: nextProps.digimon
@@ -717,9 +720,6 @@ class DigimonPane extends React.Component {
 	 * Updates all values to be displayed on the DigimonPane after a Digimon change	
 	 */
 	updateStateDetails () {
-		// Update States
-		//this.setState({stage: this.state.digimon.getProperty('stage')});
-
 		// Update Fields
 		this.updateStageField(this.state.digimon, 'name');
 		this.updateStageField(this.state.digimon, 'stage');
@@ -1073,6 +1073,7 @@ class DigimonPane extends React.Component {
 						</p>
 
 						<HtmlComponents.ArraySelect values={DigimonAttributes} id='digimonAttribute' tag='Attribute:'
+							defaultValue={DigimonAttributes[this.state.digimon.getProperty('attributeIndex')]}
 							onChange={this.onDigimonStageFieldChange.bind(this, 'attributeIndex', 'selectedIndex')} />
 
 						<FamilySelect values={DigimonFamilies} id='digimonFamilies' tag='Family:'
@@ -1084,6 +1085,7 @@ class DigimonPane extends React.Component {
 							onChange={this.onTypeChange.bind(this)} />
 
 						<HtmlComponents.ArraySelect values={DigimonSizes} id='digimonSize' tag='Size:'
+							defaultValue={DigimonSizes[this.state.digimon.getProperty('sizeIndex')]}
 							onChange={this.onDigimonStageFieldChange.bind(this, 'sizeIndex', 'selectedIndex')} />
 					</div>
 
@@ -1138,6 +1140,7 @@ class DigimonPane extends React.Component {
 				<div>
 					<p><u>Additional Details</u></p>
 					<textarea className='detailsTextArea' id='digimonDetails'
+						defaultValue={this.state.digimon.getProperty('details')}
 						onBlur={this.onDigimonStageFieldChange.bind(this, 'details', 'value')} />
 				</div>
 			</div>

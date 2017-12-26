@@ -7,6 +7,7 @@ import { DigimonSizes } from './js/DigimonData.js';
 import { DigimonStages } from './js/DigimonData.js';
 import { RibbonMenu } from './js/HtmlComponents.js';
 
+let FileSaver = require('file-saver');
 let Digimon = require('./js/Digimon.js');
 
 /**
@@ -27,7 +28,7 @@ class App extends React.Component {
 		let newDigimon = Digimon.createDigimon('Fresh', 'Botamon');
 		
 		this.state = {
-			characters: [newDigimon],
+			characters: [],
 			selectedIndex: 0
 		}
 	}
@@ -126,6 +127,60 @@ class App extends React.Component {
 		}
 	}
 
+	saveCharacter () {
+		let currentCharacter = this.state.characters[this.state.selectedIndex];
+
+		let characterName = currentCharacter.toString();
+		let characterJSON = currentCharacter.saveToJSON();
+		let characterBlob = new Blob([characterJSON], {type: "text/plain;charset=utf-8"});
+
+		FileSaver.saveAs(characterBlob, characterName + ".json");
+	}
+
+	openCharacter () {
+		let openCharacterInput = document.getElementById('openCharacterInput');
+		openCharacterInput.click();
+	}
+
+	loadCharacter (event) {
+		var file = event.target.files[0];
+		if (!file) {
+			return;
+		}
+
+		var reader = new FileReader();
+
+		reader.onload = (function(app) {
+			return function (event) {
+				try {
+					var contents = event.target.result;
+					let characterObject = JSON.parse(contents);
+					let characterClass = characterObject.class;
+					switch (characterClass) {
+						case 'Digimon':
+							let newDigimon = Digimon.createDigimon(characterObject.stage, characterObject.name);
+							newDigimon.loadFromJSON(characterObject);
+
+							// update the state with the new Digimon
+							let updatedCharacters = app.state.characters.concat([newDigimon]);
+							app.setState({
+								characters: updatedCharacters,
+								selectedIndex: updatedCharacters.length-1
+							});
+							break;
+						case 'Human':
+							break;
+						default:
+					}
+				} catch (event) {
+					alert(event);
+				}
+			};
+		})(this);
+
+		reader.readAsText(file);
+	}
+
 	render () {
 		// digimonStageSelect is used to choose a Digimon Stage in the add Digimon Modal
 		let digimonStageSelect = [];
@@ -173,6 +228,9 @@ class App extends React.Component {
 				<div className='addCharacterButtons'>
 					<button id='addHumanButton' type='button'>Add Human</button>
 					<button id='addDigimonButton' type='button'>Add Digimon</button>
+					<button className='floatRight' onClick={this.saveCharacter.bind(this)}>Save Character</button>
+					<button className='floatRight' onClick={this.openCharacter.bind(this)}>Load Character</button>
+					<input className='hidden' type='file' id='openCharacterInput' onChange={this.loadCharacter.bind(this)} />
 				</div>
 				<hr/>
 
@@ -183,7 +241,7 @@ class App extends React.Component {
 					onClick={this.changePane.bind(this)}
 				/>
 
-				<div className = 'pane'>
+				<div className='pane'>
 					{this.getPane()}
 				</div>
 

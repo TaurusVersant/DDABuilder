@@ -43,8 +43,8 @@ div.pane  {
 	background-color: #eeeeee;
 	margin-left: 100px;
 	margin-right: 100px;
-	min-width: 1200px;
-	max-width: 1200px;
+	min-width: 1000px;
+	max-width: 1000px;
 	min-height: 600px;
 	padding-bottom: 5px;
 }
@@ -63,6 +63,7 @@ div.secondColumn {
 
 div.addCharacterButtons {
 	margin-left: 100px;
+	width: 1000px;
 }
 
 span.labelTag {
@@ -90,6 +91,10 @@ input.woundbox {
 
 input.woundbox:checked + label {
     background: black;
+}
+
+button.floatRight {
+	float: right;
 }
 
 button.roundedButton {
@@ -149,7 +154,7 @@ ul.navigation {
 	padding: 10px;
 	background-color: #eeeeee;
 	padding-bottom: 45px;
-	width: 1180px;
+	width: 980px;
 	margin-left: 100px;
 }
 
