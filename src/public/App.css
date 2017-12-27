@@ -41,6 +41,11 @@
 	to { transform: rotate(360deg); }
 }
 
+.App-footer {
+	font-size: 10px;
+	margin-top: 5px;
+}
+
 /* Digimon - Digital Adventure CSS */
 
 body {
@@ -161,8 +166,9 @@ tr.qualityRow>td {
 	padding-bottom: 10px;
 }
 
-img.digimonImage {
+img.characterImage {
 	max-width: 500px;
+	max-height: 400px;
 }
 
 /*

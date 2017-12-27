@@ -1,14 +1,20 @@
 import React from 'react';
-import logo from './digivice.png';
-import './App.css';
+import logo from './public/digivice.png';
+import './public/App.css';
 
-import { DigimonPane } from './js/DigimonPane.js';
-import { DigimonSizes } from './js/DigimonData.js';
-import { DigimonStages } from './js/DigimonData.js';
-import { RibbonMenu } from './js/HtmlComponents.js';
+import { HumanPane } from './HumanPane.js';
+import { HumanAges } from './human/HumanData.js';
+import { HumanDebug } from './human/HumanDebug.js';
+
+import { DigimonPane } from './DigimonPane.js';
+import { DigimonStages } from './digimon/DigimonData.js';
+import { DigimonDebug } from './digimon/DigimonDebug.js';
+
+import { RibbonMenu } from './htmlComponents/RibbonMenu.js';
 
 let FileSaver = require('file-saver');
-let Digimon = require('./js/Digimon.js');
+let Human = require('./human/Human.js');
+let Digimon = require('./digimon/Digimon.js');
 
 /**
  * Container Class for the Project
@@ -25,10 +31,11 @@ class App extends React.Component {
 
 		document.title = 'DDA v1.2 Builder'
 
-		let newDigimon = Digimon.createDigimon('Fresh', 'Botamon');
+		//let newDigimon = Digimon.createDigimon('Fresh', 'Botamon');
+		let newHuman = Human.createHuman('Child', 'Taichi');
 		
 		this.state = {
-			characters: [],
+			characters: [newHuman],
 			selectedIndex: 0
 		}
 	}
@@ -63,6 +70,7 @@ class App extends React.Component {
 					break;
 				case 'showDebugModal':
 					showDebugModal.classList.add('hidden');
+					break;
 				default:
 			}			
 		});
@@ -72,7 +80,30 @@ class App extends React.Component {
 	 * Creates and adds a new Human to the state.characters array
 	 */
 	addHuman () {
-		console.log('Adding a human!');
+		// get Human name
+		let humanNameInput = document.getElementById('addHumanName');
+		let humanName = humanNameInput.value.trim();
+
+		if (humanName.length) {
+			// if the name is set, get the stage and create a Human object
+			let humanAgeSelect = document.getElementById('addHumanAge');
+			let humanAge = humanAgeSelect.options[humanAgeSelect.selectedIndex].value;
+			let newHuman = Human.createHuman(humanAge, humanName);
+
+			// update the state with the new Human
+			let updatedCharacters = this.state.characters.concat([newHuman]);
+			this.setState({
+				characters: updatedCharacters,
+				selectedIndex: updatedCharacters.length-1
+			});
+
+			// Reset the Human name and age fields
+			humanNameInput.value = '';
+			humanAgeSelect.selectedIndex = 0;
+
+			// hide the Add Human Modal
+			document.getElementById('addHumanModal').classList.add('hidden');
+		}
 	}
 
 	/**
@@ -199,6 +230,11 @@ class App extends React.Component {
 								updatedCharacters = updatedCharacters.concat([newDigimon]);
 								break;
 							case 'Human':
+								let newHuman = Human.createHuman(characterObject.age, characterObject.name);
+								newHuman.loadFromJSON(characterObject);
+								
+								// update the state with the new Human
+								updatedCharacters = updatedCharacters.concat([newHuman]);
 								break;
 							default:
 						}
@@ -218,10 +254,16 @@ class App extends React.Component {
 	}
 
 	render () {
+		// humanAgeSelect is used to choose a Human Age in the add Human Modal
+		let humanAgeSelect = [];
+		for (let humanAge in HumanAges) {
+			humanAgeSelect.push(<option key={humanAge} value={humanAge}>{humanAge}</option>);
+		}
+
 		// digimonStageSelect is used to choose a Digimon Stage in the add Digimon Modal
 		let digimonStageSelect = [];
 		for (let digimonStage in DigimonStages) {
-			digimonStageSelect.push(<option key={digimonStage} value={digimonStage}>{digimonStage}</option>)
+			digimonStageSelect.push(<option key={digimonStage} value={digimonStage}>{digimonStage}</option>);
 		}
 
 		// ribbonCharacters is an array of all character names used to popular the Character Select Ribbon
@@ -240,8 +282,15 @@ class App extends React.Component {
 				<div id='addHumanModal' className='modal hidden'>
 					<div className='appModal-content'>
 						<h3>Add Human</h3>
-						<label htmlFor='humanName'>Name: </label>
-						<input id='humanName' type='text'></input>
+						<label htmlFor='addHumanName'>Name: </label>
+						<input id='addHumanName' type='text'></input>
+						<br/><br/>
+						<label htmlFor='addHumanAge'>Age: </label>
+						<select id='addHumanAge' className='labelInput'>
+							{humanAgeSelect}
+						</select>
+						<br/><br/>
+						<button type='button' onClick={this.addHuman.bind(this)}>Create!</button>
 					</div>
 				</div>
 
@@ -288,6 +337,18 @@ class App extends React.Component {
 					<button title='Debug Information' id='showDebugButton' className='debugButton roundedButton'>?</button>
 					{this.getPane()}
 				</div>
+
+				<footer className='App-footer'>
+					<span>
+						Digimon Digital Adventures Character Builder by: <a href='https://github.com/TaurusVersant/DDABuilder'>Taurus Versant</a>
+						&nbsp;|&nbsp;
+						<a href='http://digimon-digital-adventures.tumblr.com/'>Digimon Digital Adventures Roleplaying Game Blog</a>
+						&nbsp;|&nbsp;
+						<a href='https://discordapp.com/invite/JbDK59r'>Join the Discord here!</a>
+						&nbsp;|&nbsp;
+						<a href='http://ko-fi.com/taurusversant'>Even a dollar helps support my work</a>
+					</span>
+				</footer>
 			</div>
 		);
 	}
@@ -300,6 +361,7 @@ class App extends React.Component {
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
 				case 'Digimon': return <DigimonDebug digimon={currentCharacter} />;
+				case 'Human': return <HumanDebug human={currentCharacter} />
 				default: alert(currentCharacter.getClass() + ' not defined.');
 			}
 		}
@@ -314,88 +376,11 @@ class App extends React.Component {
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
 				case 'Digimon': return <DigimonPane digimon={currentCharacter} />;
+				case 'Human': return <HumanPane human={currentCharacter} />;
 				default: alert(currentCharacter.getClass() + ' not defined.');
 			}
 		}
 		return '';
-	}
-}
-
-/** Debug Code **/
-class DigimonDebug extends React.Component {
-	/**
-	 * Refreshes debug every half second to update debug display
-	 */
-	componentDidMount () {
-		setInterval(() => {
-			this.setState(() => {
-				return { unseen: 'does not display' }
-			});
-		}, 500);
-	}
-
-	render () {
-		var stage = this.props.digimon.getProperty('stage');
-		var sizeIndex = this.props.digimon.getProperty('sizeIndex');
-		var stageStats = DigimonStages[stage];
-		var sizeStats = DigimonSizes[sizeIndex];
-
-		return (
-			<div className='pane' id='debugPane'>
-				<h3>Stat Calculations (Round Down Always)</h3>
-				<ul>
-					<li><b>Wound Boxes:</b> Health + Stage Bonus</li>
-					<li><b>Agility:</b> (Accuracy + Dodge)/2</li>
-					<li><b>Body:</b> (Health + Damage + Armor)/3 + Size Bonus</li>
-					<li><b>Brains:</b> Accuracy/2 + Stage Bonus</li>
-					<li><b>BIT Value:</b> Brains/10 + Stage Bonus</li>
-					<li><b>CPU Value:</b> Body/10 + Stage Bonus</li>
-					<li><b>RAM Value:</b> Agility/10 + Stage Bonus</li>
-				</ul>
-				<h3>Stage Details</h3>
-				<table>
-					<tbody>
-						<tr>
-							<th>Stage</th>
-							<th>Starting DP</th>
-							<th>Base Movement</th>
-							<th>Wound Boxes</th>
-							<th>Brains</th>
-							<th>Attacks</th>
-							<th>Spec Values</th>
-						</tr>
-						<tr>
-							<td className='tableRow'>{stageStats.id}</td>
-							<td className='tableRow'>{stageStats.startingDP}</td>
-							<td className='tableRow'>{stageStats.baseMovement}</td>
-							<td className='tableRow'>{stageStats.woundBoxes}</td>
-							<td className='tableRow'>{stageStats.brains}</td>
-							<td className='tableRow'>{stageStats.attacks}</td>
-							<td className='tableRow'>{stageStats.specValues}</td>
-						</tr>
-					</tbody>
-				</table>
-				<h3>Size Details</h3>
-				<table>
-					<tbody>
-						<tr>
-							<th>Size</th>
-							<th>Area</th>
-							<th>Square Meters</th>
-							<th>Body Bonus</th>
-							<th>Extra</th>
-						</tr>
-						<tr>
-							<td className='tableRow'>{sizeStats.id}</td>
-							<td className='tableRow'>{sizeStats.area}</td>
-							<td className='tableRow'>{sizeStats.squareMeters}</td>
-							<td className='tableRow'>{sizeStats.bodyBonus}</td>
-							<td className='tableRow'>{sizeStats.notes}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		);
 	}
 }
 

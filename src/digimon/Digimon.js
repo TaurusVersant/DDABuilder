@@ -261,7 +261,6 @@ class Digimon {
 
 		this.buildMovement();
 		this.buildDerivedStats();
-		this.derivedStats['Wound Boxes'] = this.woundBoxes;
 	}
 
 	/** QUALITY CONTROLLING FUNCTIONS **/
