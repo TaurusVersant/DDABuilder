@@ -6,6 +6,7 @@ var DigimonStages = DigimonData.DigimonStages;
 var DigimonSizes = DigimonData.DigimonSizes;
 var DigimonStats = DigimonData.DigimonStats;
 var DigimonQualitiesDigizoid = DigimonData.DigimonQualitiesDigizoid;
+var BurstModifier = DigimonData.BurstModifier;
 
 /**
  * Digimon Objects act as storage elements for a single Digimon Stage
@@ -86,6 +87,10 @@ class Digimon {
 		this.buildMovement();
 
 		this.onSwapTo();
+
+		if (this.stage === 'Burst') {
+			this.burstIndex = 0;
+		}
 	}
 
 	/** STAT CONTROLLING FUNCTIONS **/
@@ -117,7 +122,7 @@ class Digimon {
 	 * builds all derived stats and spec values based on stats property and Digimon Stage
 	 */
 	buildDerivedStats () {
-		this.derivedStats['Wound Boxes'] = this.stats.Health + DigimonStages[this.stage].woundBoxes;
+		this.derivedStats['Wound Boxes'] = this.stats.Health + DigimonStages[this.stage].woundBoxes + this.burstIndex * BurstModifier.woundBoxes;
 		this.derivedStats['Agility'] = Math.floor((this.stats.Accuracy + this.stats.Dodge) / 2) + this.statMods['Agility'];
 		this.derivedStats['Body'] = Math.floor((this.stats.Health + this.stats.Damage + this.stats.Armor)/3) + DigimonSizes[this.sizeIndex].bodyBonus + this.statMods['Body'];
 		this.derivedStats['Brains'] = Math.floor(this.stats.Accuracy/2) + DigimonStages[this.stage].brains + this.statMods['Brains'];
@@ -226,6 +231,37 @@ class Digimon {
 			this.digiPoints -= 1;
 			this.totalDigiPoints -= 1;
 		}
+	}
+
+	/**
+	 * Increases or decreases the Burst Index of the Burst level Digimon
+	 * Decreasing will only work if you have enough DP free to reduce the Burst Level
+	 */
+	modifyBurstIndex (increaseFlag) {
+		if (increaseFlag) {
+			this.burstIndex += 1;
+			this.digiPoints += BurstModifier.startingDP;
+			this.totalDigiPoints += BurstModifier.startingDP;
+
+			this.woundBoxes += BurstModifier.woundBoxes;
+			this.statMods['BaseMovement'] += BurstModifier.baseMovement;
+			this.statMods['Brains'] += BurstModifier.brains;
+			this.statMods['SpecValues'] += BurstModifier.specValues;
+		} else if (this.burstIndex !== 0 && this.digiPoints >= BurstModifier.startingDP) {
+			this.burstIndex -= 1;
+
+			this.digiPoints -= BurstModifier.startingDP;
+			this.totalDigiPoints -= BurstModifier.startingDP;
+
+			this.woundBoxes -= BurstModifier.woundBoxes;
+			this.statMods['BaseMovement'] -= BurstModifier.baseMovement;
+			this.statMods['Brains'] -= BurstModifier.brains;
+			this.statMods['SpecValues'] -= BurstModifier.specValues;
+		}
+
+		this.buildMovement();
+		this.buildDerivedStats();
+		this.derivedStats['Wound Boxes'] = this.woundBoxes;
 	}
 
 	/** QUALITY CONTROLLING FUNCTIONS **/
@@ -599,6 +635,13 @@ class Digimon {
 
 		for (let property in digimonObject) {
 			this[property] = digimonObject[property];
+		}
+
+		if (Number.isInteger(digimonObject.burstIndex)) {
+			this.burstIndex = 0;
+			for (let i = 0; i < digimonObject.burstIndex; i++) {
+				this.modifyBurstIndex(true);
+			}
 		}
 	}
 

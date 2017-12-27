@@ -47,6 +47,11 @@ class App extends React.Component {
 			addDigimonModal.classList.remove('hidden');
 		}
 
+		let showDebugModal = document.getElementById('showDebugModal');
+		document.getElementById('showDebugButton').onclick = function() {
+			showDebugModal.classList.remove('hidden');
+		}
+
 		// When the user clicks anywhere outside of the modal, close it
 		window.addEventListener('click', function (event){
 			switch (event.target.id) {
@@ -56,6 +61,8 @@ class App extends React.Component {
 				case 'addDigimonModal':
 					addDigimonModal.classList.add('hidden');
 					break;
+				case 'showDebugModal':
+					showDebugModal.classList.add('hidden');
 				default:
 			}			
 		});
@@ -127,51 +134,80 @@ class App extends React.Component {
 		}
 	}
 
+	/**
+	 * saves the currently selected character to a file
+	 */
 	saveCharacter () {
 		let currentCharacter = this.state.characters[this.state.selectedIndex];
 
 		let characterName = currentCharacter.toString();
 		let characterJSON = currentCharacter.saveToJSON();
-		let characterBlob = new Blob([characterJSON], {type: "text/plain;charset=utf-8"});
+		let characterBlob = new Blob([characterJSON], {type: 'text/plain;charset=utf-8'});
 
-		FileSaver.saveAs(characterBlob, characterName + ".json");
+		FileSaver.saveAs(characterBlob, characterName + '.json');
 	}
 
+	/**
+	 * saves every character on the page to a file
+	 */
+	saveAllCharacters () {
+		let characterArray = [];
+
+		for (let index in this.state.characters) {
+			characterArray.push(this.state.characters[index].saveToJSON());
+		}
+
+		let characterBlob = new Blob([characterArray.join('\n')], {type: 'text/plain;charset=utf-8'});
+		FileSaver.saveAs(characterBlob, 'characters.json');
+	}
+
+	/**
+	 * onclick method for the Load Character button to open an open file input dialog
+	 */
 	openCharacter () {
 		let openCharacterInput = document.getElementById('openCharacterInput');
 		openCharacterInput.click();
 	}
 
+	/**
+	 * onchange function for hidden input that takes in a file to load
+	 */
 	loadCharacter (event) {
-		var file = event.target.files[0];
+		let file = event.target.files[0];
 		if (!file) {
 			return;
 		}
 
-		var reader = new FileReader();
+		let reader = new FileReader();
 
 		reader.onload = (function(app) {
 			return function (event) {
 				try {
-					var contents = event.target.result;
-					let characterObject = JSON.parse(contents);
-					let characterClass = characterObject.class;
-					switch (characterClass) {
-						case 'Digimon':
-							let newDigimon = Digimon.createDigimon(characterObject.stage, characterObject.name);
-							newDigimon.loadFromJSON(characterObject);
+					let contents = event.target.result.split(/[\r\n]+/);
+					let updatedCharacters = app.state.characters;
 
-							// update the state with the new Digimon
-							let updatedCharacters = app.state.characters.concat([newDigimon]);
-							app.setState({
-								characters: updatedCharacters,
-								selectedIndex: updatedCharacters.length-1
-							});
-							break;
-						case 'Human':
-							break;
-						default:
+					for (let index in contents) {
+						let characterObject = JSON.parse(contents[index]);
+						let characterClass = characterObject.class;
+
+						switch (characterClass) {
+							case 'Digimon':
+								let newDigimon = Digimon.createDigimon(characterObject.stage, characterObject.name);
+								newDigimon.loadFromJSON(characterObject);
+
+								// update the state with the new Digimon
+								updatedCharacters = updatedCharacters.concat([newDigimon]);
+								break;
+							case 'Human':
+								break;
+							default:
+						}
 					}
+
+					app.setState({
+						characters: updatedCharacters,
+						selectedIndex: updatedCharacters.length-1
+					});
 				} catch (event) {
 					alert(event);
 				}
@@ -224,11 +260,18 @@ class App extends React.Component {
 					</div>
 				</div>
 
+				<div id='showDebugModal' className='modal hidden'>
+					<div className='modal-content'>
+						{this.getDebug()}
+					</div>
+				</div>
+
 				<hr/>
 				<div className='addCharacterButtons'>
 					<button id='addHumanButton' type='button'>Add Human</button>
 					<button id='addDigimonButton' type='button'>Add Digimon</button>
 					<button className='floatRight' onClick={this.saveCharacter.bind(this)}>Save Character</button>
+					<button className='floatRight' onClick={this.saveAllCharacters.bind(this)}>Save All Characters</button>
 					<button className='floatRight' onClick={this.openCharacter.bind(this)}>Load Character</button>
 					<input className='hidden' type='file' id='openCharacterInput' onChange={this.loadCharacter.bind(this)} />
 				</div>
@@ -242,10 +285,9 @@ class App extends React.Component {
 				/>
 
 				<div className='pane'>
+					<button title='Debug Information' id='showDebugButton' className='debugButton roundedButton'>?</button>
 					{this.getPane()}
 				</div>
-
-				{this.getDebug()}
 			</div>
 		);
 	}
@@ -258,7 +300,7 @@ class App extends React.Component {
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
 				case 'Digimon': return <DigimonDebug digimon={currentCharacter} />;
-				default: alert(currentCharacter.getClass() + " not defined.");
+				default: alert(currentCharacter.getClass() + ' not defined.');
 			}
 		}
 		return '';
@@ -272,7 +314,7 @@ class App extends React.Component {
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
 				case 'Digimon': return <DigimonPane digimon={currentCharacter} />;
-				default: alert(currentCharacter.getClass() + " not defined.");
+				default: alert(currentCharacter.getClass() + ' not defined.');
 			}
 		}
 		return '';

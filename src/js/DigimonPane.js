@@ -1022,6 +1022,17 @@ class DigimonPane extends React.Component {
 	}
 
 	/**
+	 * Calls the modifyBurstIndex function with the increaseFlag attached on the current active Digimon
+	 */
+	modifyBurstIndex (increaseFlag) {
+		this.state.digimon.modifyBurstIndex(increaseFlag);
+
+		setTimeout(() => {
+			this.updateStateDetails(() => { });
+		}, 50);
+	}
+
+	/**
 	 * TODO: Render an empty pane with a button for adding a Digimon
 	 * this button creates a new Digimon Line from a staring dialogue where a user names the Digimon and chooses its stage
 	 * add Digimon's current stage to the details
@@ -1047,6 +1058,19 @@ class DigimonPane extends React.Component {
 			digimonStageSelect.push({id: digimonStage})
 		}
 
+		let burstLevels = '';
+		let burstIndex = this.state.digimon.getProperty('burstIndex');
+		if (Number.isInteger(burstIndex)) {
+			burstLevels = (
+				<p>
+					<span className='labelTag'>Burst Level:</span>
+					<button onClick={this.modifyBurstIndex.bind(this, false)}>-</button>
+					<span className='labelValue'>{burstIndex}</span>
+					<button onClick={this.modifyBurstIndex.bind(this, true)}>+</button>
+				</p>
+			);
+		}
+
 		return (
 			<div>
 				<h1 id='digimonTitle'>{this.state.digimon.getProperty('name')}</h1>
@@ -1066,7 +1090,9 @@ class DigimonPane extends React.Component {
 								{this.state.digimon.getProperty('totalDigiPoints')}
 							</span>
 							<button onClick={this.modifyDigiPoints.bind(this, true)}>+</button>
-						</p><br/>
+						</p>
+						{burstLevels}
+						<br/>
 						<p><u>Details</u></p>
 						<p>
 							<span className='labelTag'>Name:</span>

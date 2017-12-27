@@ -32,6 +32,14 @@ module.exports.DigimonStages = {
 	"Burst": { id: "Burst", startingDP: 85, baseMovement: 14, woundBoxes: 14, brains: 13, attacks: 5, specValues: 5 }
 };
 
+module.exports.BurstModifier = {
+	startingDP: 15,
+	baseMovement: 2,
+	woundBoxes: 4,
+	brains: 3,
+	specValues: 1
+}
+
 module.exports.DigimonSizes = [
 	{ id: "Tiny", area: "1x1", squareMeters: "1+", bodyBonus: 0, notes: "May occupy squares that another Digimon or Tamer are standing in." },
 	{ id: "Small", area: "1x1", squareMeters: "1+", bodyBonus: 2, notes: "May move through squares that other Digimon or Tamers are standing in." },
