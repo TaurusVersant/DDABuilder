@@ -12,16 +12,11 @@ import { DigimonDebug } from './digimon/DigimonDebug.js';
 
 import { RibbonMenu } from './htmlComponents/RibbonMenu.js';
 
+import { FAQ }  from './public/faq.js';
+
 let FileSaver = require('file-saver');
 let Human = require('./human/Human.js');
 let Digimon = require('./digimon/Digimon.js');
-
-//TODO: sanity
-//TODO: inspiration
-//TODO: torments
-//TODO: aspects
-//TODO: swap from create to maintain
-//TODO: FAQ
 
 /**
  * Container Class for the Project
@@ -39,10 +34,10 @@ class App extends React.Component {
 		document.title = 'DDA v1.2 Builder'
 
 		//let newCharacter = Digimon.createDigimon('Fresh', 'Botamon');
-		let newCharacter = Human.createHuman('Child', 'Taichi');
+		//let newCharacter = Human.createHuman('Child', 'Taichi');
 		
 		this.state = {
-			characters: [newCharacter],
+			characters: [],
 			digimonLines: [],
 			selectedIndex: 0
 		}
@@ -67,6 +62,11 @@ class App extends React.Component {
 			showDebugModal.classList.remove('hidden');
 		}
 
+		let showFAQModal = document.getElementById('showFAQModal');
+		document.getElementById('showFAQButton').onclick = function() {
+			showFAQModal.classList.remove('hidden');
+		}
+
 		// When the user clicks anywhere outside of the modal, close it
 		window.addEventListener('click', function (event){
 			switch (event.target.id) {
@@ -78,6 +78,9 @@ class App extends React.Component {
 					break;
 				case 'showDebugModal':
 					showDebugModal.classList.add('hidden');
+					break;
+				case 'showFAQModal':
+					showFAQModal.classList.add('hidden');
 					break;
 				default:
 			}			
@@ -328,8 +331,15 @@ class App extends React.Component {
 					</div>
 				</div>
 
+				<div id='showFAQModal' className='modal hidden'>
+					<div className='modal-content'>
+						{this.getFAQ()}
+					</div>
+				</div>
+
 				<hr/>
 				<div className='addCharacterButtons'>
+					<button title='FAQ' id='showFAQButton' className='debugButton roundedButton'>FAQ</button>
 					<button id='addHumanButton' type='button'>Add Human</button>
 					<button id='addDigimonButton' type='button'>Add Digimon</button>
 					<button className='floatRight' onClick={this.saveCharacter.bind(this)}>Save Character</button>
@@ -379,6 +389,27 @@ class App extends React.Component {
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Builds a FAQ pane using the data provided by the FAQ object
+	 */
+	getFAQ () {
+		let faqAnswers = [];
+		for (let question in FAQ) {
+			faqAnswers.push(
+				<p key={question}>
+					<b>{question}</b><br/>
+					<span>{FAQ[question]}</span>
+				</p>
+			);
+		}
+		return (
+			<div>
+				<h3>FAQ</h3>
+				{faqAnswers}
+			</div>
+		);
 	}
 
 	/**

@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { CharacterStats } from './htmlComponents/CharacterStats.js';
+import { HumanAspects } from './human/paneHumanAspects.js';
+import { HumanTorments } from './human/paneHumanTorments.js';
+
 import { WoundBoxes } from './htmlComponents/WoundBoxes.js';
+import { CharacterStats } from './htmlComponents/CharacterStats.js';
 
 /**
  * The HumanPane acts as the root object for displaying Human character sheets
@@ -33,6 +36,30 @@ class HumanPane extends React.Component {
 	 * Updates all values to be displayed on the HumanPane after a Human change	
 	 */
 	updateStateDetails () {
+		this.updateStageField(this.state.human, 'creationComplete');
+		this.updateStageField(this.state.human, 'name');
+		this.updateStageField(this.state.human, 'age');
+		this.updateStageField(this.state.human, 'details');
+
+
+		// Update Attacks
+		let humanMajorAspects = this.state.human.getProperty('majorAspects');
+		let humanMinorAspects = this.state.human.getProperty('minorAspects');
+
+		for (let i = 0; i < humanMajorAspects.length; i++) {
+			let majorAspect = document.getElementById('aMajor_' + i);
+			if (majorAspect !== null) {
+				majorAspect.value = humanMajorAspects[i];
+			}
+		}
+
+		for (let i = 0; i < humanMinorAspects.length; i++) {
+			let minorAspect = document.getElementById('aMinor_' + i);
+			if (minorAspect !== null) {
+				minorAspect.value = humanMinorAspects[i];
+			}
+		}
+
 		this.setState({updated: 'updated'});
 	}
 
@@ -41,12 +68,20 @@ class HumanPane extends React.Component {
 	 */
 	updateStageField (currentHuman, fieldProperty) {
 		switch (fieldProperty) {
+			/*case 'creationComplete':
+				let creationComplete = document.getElementById('creationComplete');
+				creationComplete.checked = currentHuman.flags.startingCap !== true;
+				break;*/
 			case 'name':
 				let humanTitle = document.getElementById('humanTitle');
 				humanTitle.innerHTML = currentHuman.getProperty('name');
 
 				let humanNameField = document.getElementById('humanName');
 				humanNameField.value = currentHuman.getProperty('name');
+				break;
+			case 'age':
+				let humanAge = document.getElementById('humanAge');
+				humanAge.value = currentHuman.getProperty('age');
 				break;
 			case 'details':
 				var humanDetailsField = document.getElementById('humanDetails');
@@ -125,6 +160,13 @@ class HumanPane extends React.Component {
 		}, 100);
 	}
 
+	/**
+	 * Updates the 
+	 */
+	completeCreation (event) {
+		this.state.human.completeCreation(event.target.checked);
+	}
+
 	render () {
 		return (
 			<div>
@@ -140,6 +182,10 @@ class HumanPane extends React.Component {
 								{this.state.human.getProperty('totalCreationPoints')}
 							</span>
 							<button onClick={this.modifyCreationPoints.bind(this, true)}>+</button>
+						</p>
+						<p>
+							<span className='labelTag'>Creation Complete:</span>
+							<input className='labelCheckbox' id='creationComplete' type='checkbox' onClick={this.completeCreation.bind(this)} />
 						</p>
 						<p><u>Details</u></p>
 						<p>
@@ -176,16 +222,30 @@ class HumanPane extends React.Component {
 							stats={this.state.human.getProperty('attributes')}
 							onClick={this.onHumanStatChange.bind(this, 'changeAttribute')}
 						/>
+
 						<p><u>Derived Stats</u></p>
 						<CharacterStats stats={this.state.human.getProperty('derivedStats')} />
+
 						<p><u>Special Stats</u></p>
 						<p>
 							<span className='labelTag'>Sanity Drain:</span>
-							<input readOnly='true' className='labelInput' id='sanityDrain' defaultValue='0' />
+							<button onClick={this.onHumanStatChange.bind(this, 'changeSpecialStat', 'sanityDrain', '-')}>-</button>
+							<span className='labelValue'>
+								{this.state.human.getProperty('sanityDrain')}
+								/
+								{this.state.human.getSanityDrainCap()}
+							</span>
+							<button onClick={this.onHumanStatChange.bind(this, 'changeSpecialStat', 'sanityDrain', '+')}>+</button>
 						</p>
 						<p>
 							<span className='labelTag'>Inspiration:</span>
-							<input readOnly='true' className='labelInput' id='inspiration' defaultValue='0' />
+							<button onClick={this.onHumanStatChange.bind(this, 'changeSpecialStat', 'inspiration', '-')}>-</button>
+							<span className='labelValue'>
+								{this.state.human.getProperty('inspiration')}
+								/
+								{this.state.human.getInspirationCap()}
+							</span>
+							<button onClick={this.onHumanStatChange.bind(this, 'changeSpecialStat', 'inspiration', '+')}>+</button>
 						</p>
 					</div>
 
@@ -198,14 +258,9 @@ class HumanPane extends React.Component {
 					</div>
 				</div>
 
-				<div>
-					<p><u>Aspects</u></p>
-				</div>
+				<HumanAspects human={this.state.human} updatePane={this.updateStateDetails.bind(this)} />
 
-				<div>
-					<p><u>Torments</u></p>
-				</div>
-
+				<HumanTorments human={this.state.human} updatePane={this.updateStateDetails.bind(this)} />
 				<div>
 					<p><u>Additional Details</u></p>
 					<textarea className='detailsTextArea' id='humanDetails'

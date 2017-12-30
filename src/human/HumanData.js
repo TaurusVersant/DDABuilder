@@ -27,7 +27,7 @@ module.exports.HumanSkills = [
 ];
 
 module.exports.HumanTorments = {
-	'Minor': { boxes: 5, startingCap: 2 },
-	'Major': { boxes: 7, startingCap: 3 },
-	'Terrible': { boxes: 10, startingCap: 5 }
+	'minorTorments': { id: 'Minor', boxes: 5, startingCap: 2 },
+	'majorTorments': { id: 'Major', boxes: 7, startingCap: 3 },
+	'terribleTorments': { id: 'Terrible', boxes: 10, startingCap: 5 }
 };

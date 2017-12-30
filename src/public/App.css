@@ -85,6 +85,14 @@ span.labelTag {
 	font-weight: bold;
 }
 
+span.longTag {
+	width: 200px;
+	display: inline-block;
+	text-align: center;
+	margin-left: 5px;
+	font-weight: bold;
+}
+
 span.labelValue {
 	margin: 10px;
 }
@@ -95,9 +103,33 @@ p.attackTagList {
 	padding-bottom: -10px;
 }
 
+p.aspectButtons {
+	margin-left: 22px;
+}
+
 input.woundbox {
 	transform: scale(4);
 	margin: 30px;
+}
+
+input.tormentbox {
+	transform: scale(2);
+	margin-left: 30px;
+}
+
+input.labelInput {
+	width: 169px;
+}
+
+input.medInput {
+	width: 300px;
+}
+input.longInput {
+	width: 750px;
+}
+
+input.labelCheckbox {
+	margin-left: 45px;
 }
 
 input.woundbox:checked + label {
@@ -117,6 +149,10 @@ button.roundedButton {
 	border-radius: 20px;
 	font-size: 10px;
 	color: red;
+}
+
+button.aspectButtons {
+	margin-left: 5px;
 }
 
 select.labelInput {
@@ -180,14 +216,17 @@ ul.navigation {
 	background-color: #eeeeee;
 	padding-bottom: 45px;
 	width: 980px;
+	display: inline-block;
+	margin-bottom: -5px;
+	padding-bottom: 10px;
 }
 
 ul.navigation li {
 	list-style: none;
-	float: left;
 	border: solid;
 	border-color: #dddddd;
 	padding: 5px;
+	display: inline-block;
 }
 
 ul.navigation li button {

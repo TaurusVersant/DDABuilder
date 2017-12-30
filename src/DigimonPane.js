@@ -2,12 +2,12 @@ import React from 'react';
 
 import { FamilySelect } from './digimon/paneFamilySelect.js';
 import { TypeInput } from './digimon/paneTypeInput.js';
-import { WoundBoxes } from './htmlComponents/WoundBoxes.js';
 import { DigimonQualityList } from './digimon/paneDigimonQualityList.js';
 import { DigimonAttackList } from './digimon/paneDigimonAttackList.js';
 import { LineSelect } from './digimon/paneLineSelect.js';
 
 import { ArraySelect } from './htmlComponents/ArraySelect.js';
+import { WoundBoxes } from './htmlComponents/WoundBoxes.js';
 import { CharacterStats } from './htmlComponents/CharacterStats.js';
 import { TableDetails } from './htmlComponents/TableDetails.js';
 

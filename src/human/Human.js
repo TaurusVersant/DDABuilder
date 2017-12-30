@@ -4,14 +4,12 @@ let HumanData = require('./HumanData.js');
 let HumanAges = HumanData.HumanAges;
 let HumanAttributes = HumanData.HumanAttributes;
 let HumanSkills = HumanData.HumanSkills;
+let HumanTorments = HumanData.HumanTorments;
 
 /**
- *
+ * Storage element for a Human character, maintaining stats and details and ensuring rule consistency
  */
 class Human {
-	/**
-	 * 
-	 */
 	constructor (age, name) {
 		this.class = 'Human';
 		this.name = name;
@@ -21,6 +19,16 @@ class Human {
 		this.totalCreationPoints = HumanAges[this.age].startingCP;
 
 		this.details = "";
+
+		this.majorAspects = [''];
+		this.minorAspects = [''];
+
+		this.minorTorments = [
+			{id:'', checked: 0},
+			{id:'', checked: 0}
+		];
+		this.majorTorments = [];
+		this.terribleTorments = [];
 
 		this.attributes = {};
 		for (let i in HumanAttributes) {
@@ -32,7 +40,16 @@ class Human {
 			this.skills[HumanSkills[i]] = 0;
 		}
 
+		this.sanityDrain = 0;
+		this.inspiration = 1;
+		
+		this.specialStats = {
+			'Sanity Drain': 0,
+			'Inspiration': 1
+		}
+
 		this.flags = {
+			'creationComplete': false,
 			'maxAtt': false,
 			'maxSkill': false,
 			'attSpent': 0,
@@ -45,6 +62,62 @@ class Human {
 		this.woundBoxes = this.derivedStats['Wound Boxes'];
 
 		this.onSwapTo();
+	}
+
+	/**
+	 * Adds or removes a major or minor aspect from the character
+	 */
+	updateAspect (aspectType, aspect, index, removeFlag) {
+		if (removeFlag === true) {
+			this[aspectType].splice(index, 1);
+		} else {
+			this[aspectType][index] = aspect;
+		}
+	}
+
+	/**
+	 * Adds or removes a major or minor aspect from the character
+	 */
+	updateTorment (tormentType, torment, index, removeFlag) {
+		if (removeFlag === true) {
+			this[tormentType].splice(index, 1);
+		} else {
+			this[tormentType][index] = {id: torment, checked: 0};
+		}
+	}
+
+	/**
+	 * Increases or decreases the progress a character is making with a torment
+	 */
+	checkTorment (tormentType, index, checked) {
+		if (
+			checked === true &&
+			(
+				this.flags.creationComplete === true ||
+				(
+					this[tormentType][index].checked < HumanTorments[tormentType].startingCap &&
+					this.creationPoints > 0
+				)
+			)
+		) {
+			this[tormentType][index].checked += 1;
+			if (this.flags.creationComplete === false) {
+				this.creationPoints -= 1;
+			}
+		} else if (checked === false) {
+			this[tormentType][index].checked -= 1;
+
+			if (this.flags.creationComplete === false) {
+				this.creationPoints += 1;
+			}
+		}
+	}
+
+	/**
+	 * Receives a flag indicating whether or not initial character creation has been completed
+	 */
+	completeCreation (creationComplete) {
+		this.flags.creationComplete = creationComplete;
 	}
 
 	/** STAT CONTROLLING FUNCTIONS **/
@@ -63,6 +136,42 @@ class Human {
 		this.derivedStats['Damage'] = this.attributes['Body'] + this.skills['Fight'];
 	}
 
+	/**
+	 * Increases or decreases the special stats Sanity Drain and Inspiration based on predefined rules
+	 */
+	changeSpecialStat (statName, statChange) {
+		if (statChange === '-' && this[statName] > 0) {
+			this[statName] -= 1;
+		} else if (statChange === '+') {
+			if (statName === 'sanityDrain' && (this[statName] < this.getSanityDrainCap())) {
+				this[statName] += 1;
+			} else if (statName === 'inspiration' && this[statName] < this.getInspirationCap()) {
+				this[statName] += 1;
+			}
+		}
+	}
+
+	/**
+	 * Determines the current Sanity Drain cap
+	 */
+	getSanityDrainCap () {
+		let maxSanDrain = 0;
+		if (this.attributes['Willpower'] > this.skills['Bravery']) {
+			maxSanDrain = this.attributes['Willpower'] - 2;
+		} else {
+			maxSanDrain = this.skills['Bravery'] - 2;
+		}
+
+		return maxSanDrain > 0 ? maxSanDrain : 0;
+	}
+
+	/**
+	 * Determines the current Inspiration cap
+	 */
+	getInspirationCap () {
+		return this.attributes['Willpower'] ? this.attributes['Willpower'] : 1;
+	}
+
 	changeAttribute (attName, attChange) {
 		this.changeStat('attribute', attName, attChange, this.attributes, 'maxAtt', 'attSpent');
 	}
@@ -77,9 +186,10 @@ class Human {
 	 */
 	changeStat (statType, statName, statChange, statSet, maxFlag, spentFlag) {
 		let updateHealth = false;
+		let statCap = this.flags.creationComplete ? HumanAges[this.age].finalCap : HumanAges[this.age].startingCap;
 
 		if (statChange === '-' && statSet[statName] > 0) {
-			if (statSet[statName] === HumanAges[this.age].startingCap) {
+			if (statSet[statName] === statCap) {
 				this.flags[maxFlag] = false;
 			}
 
@@ -95,10 +205,10 @@ class Human {
 		else if (
 			statChange === '+' &&
 			this.creationPoints &&
-			statSet[statName] < HumanAges[this.age].startingCap &&
-			this.flags[spentFlag] < HumanAges[this.age].areaCap
+			statSet[statName] < statCap &&
+			(this.flags.creationComplete === true || this.flags[spentFlag] < HumanAges[this.age].areaCap)
 		) {
-			if (this.flags[maxFlag] && (statSet[statName] + 1 === HumanAges[this.age].startingCap)) {
+			if (this.flags[maxFlag] && (this.flags.creationComplete === false && statSet[statName] + 1 === HumanAges[this.age].startingCap)) {
 				alert('Cannot increase a second ' + statType + ' to the starting cap.');
 			} else {
 				updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
