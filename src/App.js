@@ -344,7 +344,7 @@ class App extends React.Component {
 					<button id='addDigimonButton' type='button'>Add Digimon</button>
 					<button className='floatRight' onClick={this.saveCharacter.bind(this)}>Save Character</button>
 					<button className='floatRight' onClick={this.saveAllCharacters.bind(this)}>Save All Characters</button>
-					<button className='floatRight' onClick={this.openCharacter.bind(this)}>Load Character</button>
+					<button className='floatRight' onClick={this.openCharacter.bind(this)}>Load Characters</button>
 					<input className='hidden' type='file' id='openCharacterInput' onChange={this.loadCharacter.bind(this)} />
 				</div>
 				<hr/>
