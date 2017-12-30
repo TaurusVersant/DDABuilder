@@ -2,12 +2,13 @@ import React from 'react';
 
 import { FamilySelect } from './digimon/paneFamilySelect.js';
 import { TypeInput } from './digimon/paneTypeInput.js';
-import { WoundBoxes } from './digimon/paneWoundBoxes.js';
-import { DigimonStats } from './digimon/paneDigimonStats.js';
+import { WoundBoxes } from './htmlComponents/WoundBoxes.js';
 import { DigimonQualityList } from './digimon/paneDigimonQualityList.js';
 import { DigimonAttackList } from './digimon/paneDigimonAttackList.js';
+import { LineSelect } from './digimon/paneLineSelect.js';
 
 import { ArraySelect } from './htmlComponents/ArraySelect.js';
+import { CharacterStats } from './htmlComponents/CharacterStats.js';
 import { TableDetails } from './htmlComponents/TableDetails.js';
 
 var DigimonData = require('./digimon/DigimonData.js');
@@ -148,7 +149,7 @@ class DigimonPane extends React.Component {
 	}
 	
 	/**
-	 * Refreshes the Pane when a field of the Digimon object active in the DigimonLine is modified
+	 * Refreshes the Pane when a field of the current Digimon is modified
 	 */
 	onDigimonStageFieldChange (fieldProperty, fieldLocation, event) {
 		var currentDigimon = this.state.digimon;
@@ -158,7 +159,7 @@ class DigimonPane extends React.Component {
 	}
 	
 	/**
-	 * Refreshes the Pane when a stat of the Digimon object active in the DigimonLine is modified
+	 * Refreshes the Pane when a stat of the current Digimon is modified
 	 */
 	onDigimonStatChange (statName, statChange, event) {
 		this.state.digimon.changeStat(statName, statChange);
@@ -204,6 +205,41 @@ class DigimonPane extends React.Component {
 		}, 100);
 	}
 	
+	/**
+	 * Refreshes the Pane when the active Digimon either has a Line added or removed
+	 */
+	onLineSelectChange (addNewLine, selectText, removeName, addText, event) {
+		if (removeName !== false) {
+			this.state.digimon.setProperty('digimonLine', undefined);
+
+			setTimeout(() => {
+				this.updateStateDetails(() => { });
+			}, 100);
+		}
+		else {
+			var selectedIndex = event.target.selectedIndex;
+			var selectedOption = event.target.options[selectedIndex];
+			event.target.selectedIndex = 0;
+
+			if (selectedOption.value !== selectText && selectedOption.value !== '') {
+				var lineName = selectedOption.value;
+
+				if (lineName === addText) {
+					lineName = window.prompt('Please enter a new Line:', '');
+				}
+
+				if (lineName !== null) {
+					this.state.digimon.setProperty('digimonLine', lineName);
+
+					addNewLine(lineName);
+
+					setTimeout(() => {
+						this.updateStateDetails(() => { });
+					}, 100);
+				}
+			}
+		}
+	}
 	/**
 	 * Refreshes the Pane when the active Digimon either has a Family added or removed
 	 */
@@ -352,6 +388,11 @@ class DigimonPane extends React.Component {
 							<button onClick={this.modifyDigiPoints.bind(this, true)}>+</button>
 						</p>
 						{burstLevels}
+
+						<LineSelect values={this.props.digimonLines} id='digimonLines' tag='Line:'
+							digimonLine={this.state.digimon.getProperty('digimonLine')}
+							onChange={this.onLineSelectChange.bind(this, this.props.addNewLine)} />
+
 						<br/>
 						<p><u>Details</u></p>
 						<p>
@@ -399,16 +440,16 @@ class DigimonPane extends React.Component {
 							values={this.state.digimon.getProperty('movementDetails')} />
 
 						<p><u>Stats</u></p>
-						<DigimonStats
+						<CharacterStats
 							stats={this.state.digimon.getProperty('stats')}
 							onClick={this.onDigimonStatChange.bind(this)}
 						/>
 					</div>
 					<div className='secondColumn'>
 						<p><u>Derived Stats</u></p>
-						<DigimonStats stats={this.state.digimon.getProperty('derivedStats')} />
+						<CharacterStats stats={this.state.digimon.getProperty('derivedStats')} />
 						<p><u>Spec Stats</u></p>
-						<DigimonStats stats={this.state.digimon.getProperty('specValues')} />
+						<CharacterStats stats={this.state.digimon.getProperty('specValues')} />
 					</div>
 				</div>
 

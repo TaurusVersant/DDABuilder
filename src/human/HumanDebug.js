@@ -20,7 +20,15 @@ class HumanDebug extends React.Component {
 
 		return (
 			<div className='pane' id='debugPane'>
-				
+				<h3>Stat Calculations (Round Down Always)</h3>
+				<ul>
+					<li><b>Wound Boxes:</b> Body Attribute + Endurance Skill (minimum 2)</li>
+					<li><b>Movement:</b> Agility Attribute + Survival Skill</li>
+					<li><b>Accuracy:</b> Agility Attribute + Fight Skill</li>
+					<li><b>Dodge:</b> Agility Attribute + Dodge Skill</li>
+					<li><b>Armor:</b> Body Attribute + Endurance Skill</li>
+					<li><b>Damage:</b> Body Attribute + Fight Skill</li>
+				</ul>
 				<h3>Age Details</h3>
 				<table>
 					<tbody>

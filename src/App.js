@@ -16,6 +16,13 @@ let FileSaver = require('file-saver');
 let Human = require('./human/Human.js');
 let Digimon = require('./digimon/Digimon.js');
 
+//TODO: sanity
+//TODO: inspiration
+//TODO: torments
+//TODO: aspects
+//TODO: swap from create to maintain
+//TODO: FAQ
+
 /**
  * Container Class for the Project
  */
@@ -31,11 +38,12 @@ class App extends React.Component {
 
 		document.title = 'DDA v1.2 Builder'
 
-		//let newDigimon = Digimon.createDigimon('Fresh', 'Botamon');
-		let newHuman = Human.createHuman('Child', 'Taichi');
+		//let newCharacter = Digimon.createDigimon('Fresh', 'Botamon');
+		let newCharacter = Human.createHuman('Child', 'Taichi');
 		
 		this.state = {
-			characters: [newHuman],
+			characters: [newCharacter],
+			digimonLines: [],
 			selectedIndex: 0
 		}
 	}
@@ -226,6 +234,11 @@ class App extends React.Component {
 								let newDigimon = Digimon.createDigimon(characterObject.stage, characterObject.name);
 								newDigimon.loadFromJSON(characterObject);
 
+								let digimonLine = newDigimon.getProperty('digimonLine');
+								if (typeof digimonLine === 'string') {
+									app.addNewLine(digimonLine);
+								}
+
 								// update the state with the new Digimon
 								updatedCharacters = updatedCharacters.concat([newDigimon]);
 								break;
@@ -375,12 +388,21 @@ class App extends React.Component {
 		let currentCharacter = this.state.characters[this.state.selectedIndex];
 		if (currentCharacter !== undefined && typeof currentCharacter.getClass === 'function') {
 			switch (currentCharacter.getClass()) {
-				case 'Digimon': return <DigimonPane digimon={currentCharacter} />;
+				case 'Digimon': return <DigimonPane digimon={currentCharacter} digimonLines={this.state.digimonLines} addNewLine={this.addNewLine.bind(this)}/>;
 				case 'Human': return <HumanPane human={currentCharacter} />;
 				default: alert(currentCharacter.getClass() + ' not defined.');
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Function called when a new Digimon Line is added, memorizes the line to the App
+	 */
+	addNewLine (lineName) {
+		if (this.state.digimonLines.indexOf(lineName) === -1) {
+			this.state.digimonLines.push(lineName);
+		}
 	}
 }
 

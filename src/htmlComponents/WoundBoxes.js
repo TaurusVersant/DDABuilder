@@ -2,11 +2,11 @@ import React from 'react';
 
 /**
  * WoundBoxes Objects act as a block of elements contained within a <div> which
- * display a series of <input> checkboxes representing the Wound Boxes of a Digimon
+ * display a series of <input> checkboxes representing the Wound Boxes of a Character
  *
  * A WoundBoxes Object requires as props to the React.Component
- *	@maxHealth	- an int representing the maximum number of Wound Boxes the Digimon can have
- *	@health		- an int representing the current number of Wound Boxes the Digimon has
+ *	@maxHealth	- an int representing the maximum number of Wound Boxes the Character can have
+ *	@health		- an int representing the current number of Wound Boxes the Character has
  *	@onClick	- a function reference to the function called when each Wound Box is clicked
  */
 class WoundBoxes extends React.Component {	

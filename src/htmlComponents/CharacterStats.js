@@ -1,14 +1,14 @@
 import React from 'react';
 
 /**
- * DigimonStats Objects act as a block of elements contained within a <div> which
+ * CharacterStats Objects act as a block of elements contained within a <div> which
  * displays all the stats in the provided stats property
  *
- * A DigimonStats Object requires as props to the React.Component
+ * A CharacterStats Object requires as props to the React.Component
  *	@stats		- an object of stat:value pairs
  *	@onClick	- an optional property that specifies a stat is modifiable and on modifying uses the attached function
  */
-class DigimonStats extends React.Component {
+class CharacterStats extends React.Component {
 	/**
 	 * creates a <span> element containing two <button> elements framing another <span> element
 	 * the leftmost button is used to reduce the value of the stat while the rightmost button increase it
@@ -69,4 +69,4 @@ class DigimonStats extends React.Component {
 	}
 }
 
-export { DigimonStats }
+export { CharacterStats }

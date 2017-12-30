@@ -122,7 +122,12 @@ class Digimon {
 	 * builds all derived stats and spec values based on stats property and Digimon Stage
 	 */
 	buildDerivedStats () {
-		this.derivedStats['Wound Boxes'] = this.stats.Health + DigimonStages[this.stage].woundBoxes + this.burstIndex * BurstModifier.woundBoxes;
+		this.derivedStats['Wound Boxes'] = this.stats.Health + DigimonStages[this.stage].woundBoxes;
+
+		if (Number.isInteger(this.burstIndex)) {
+			this.derivedStats['Wound Boxes'] += this.burstIndex * BurstModifier.woundBoxes;
+		}
+
 		this.derivedStats['Agility'] = Math.floor((this.stats.Accuracy + this.stats.Dodge) / 2) + this.statMods['Agility'];
 		this.derivedStats['Body'] = Math.floor((this.stats.Health + this.stats.Damage + this.stats.Armor)/3) + DigimonSizes[this.sizeIndex].bodyBonus + this.statMods['Body'];
 		this.derivedStats['Brains'] = Math.floor(this.stats.Accuracy/2) + DigimonStages[this.stage].brains + this.statMods['Brains'];
@@ -141,7 +146,7 @@ class Digimon {
 	 * then calls buildDerivedStats
 	 */
 	changeStat (statName, statChange) {
-		var updateHealth = false;
+		let updateHealth = false;
 
 		if (statChange === '-' && this.stats[statName] > 0) {
 			this.stats[statName] -= 1;
