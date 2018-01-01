@@ -10,4 +10,5 @@ To Run:
 4) this builder does not remember data, so to preserve you must use the save and load buttons to archive characters as json files locally
 
 More can be learned about the system here: http://digimon-digital-adventures.tumblr.com/handbooks
+
 And a link to the DDA Discord can be found here: https://discordapp.com/invite/JbDK59r
