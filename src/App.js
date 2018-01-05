@@ -31,7 +31,7 @@ class App extends React.Component {
 	constructor (props) {
 		super(props);
 
-		document.title = 'DDA v1.2 Builder'
+		document.title = 'DDA v1.3 Builder'
 
 		//let newCharacter = Digimon.createDigimon('Fresh', 'Botamon');
 		//let newCharacter = Human.createHuman('Child', 'Taichi');
@@ -292,7 +292,7 @@ class App extends React.Component {
 			<div className='App'>
 				<header className='App-header'>
 					<img src={logo} className='App-logo-still' alt='logo' />
-					<h1 className='App-title'>Digimon Digital Adventures v1.2 Character Builder</h1>
+					<h1 className='App-title'>Digimon Digital Adventures v1.3 Character Builder</h1>
 				</header>
 
 				<div id='addHumanModal' className='modal hidden'>
