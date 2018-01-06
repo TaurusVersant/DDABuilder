@@ -66,7 +66,7 @@ div.divRow {
 }
 
 div.firstColumn {
-	width: 500px;
+	width: 550px;
 }
 
 div.secondColumn {
@@ -204,8 +204,8 @@ tr.qualityRow>td {
 }
 
 img.characterImage {
-	max-width: 500px;
-	max-height: 400px;
+	max-width: 400px;
+	max-height: 450px;
 }
 
 /*
@@ -253,6 +253,14 @@ button.addStage {
 	margin-top: 12px;
 	margin-left: 20px;
 	height: 30px;
+}
+
+label.labelDigimonStage {
+	margin-left: 2px;
+}
+
+label.labelHumanAge {
+	margin-left: 15px;
 }
 
 /*

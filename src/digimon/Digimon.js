@@ -1,12 +1,14 @@
 /* Digimon Digital Adventures Digimon */
 
-var DigimonData = require('./DigimonData.js');
+let DigimonData = require('./DigimonData.js');
 
-var DigimonStages = DigimonData.DigimonStages;
-var DigimonSizes = DigimonData.DigimonSizes;
-var DigimonStats = DigimonData.DigimonStats;
-var DigimonQualitiesDigizoid = DigimonData.DigimonQualitiesDigizoid;
-var BurstModifier = DigimonData.BurstModifier;
+let DigimonStages = DigimonData.DigimonStages;
+let DigimonSizes = DigimonData.DigimonSizes;
+let DigimonStats = DigimonData.DigimonStats;
+let BurstModifier = DigimonData.BurstModifier;
+
+let DigimonStageOrder = Object.keys(DigimonStages);
+let ChampionIndex = DigimonStageOrder.indexOf('Champion');
 
 /**
  * Digimon Objects act as storage elements for a single Digimon Stage
@@ -23,7 +25,7 @@ var BurstModifier = DigimonData.BurstModifier;
  *	@digimonTypes 		- array of strings containing the Types a Digimon is
  *	@stats				- object recording the five stats of a digimon, Health, Accuracy, Damage, Dodge, Armor
  *	@qualities			- array of strings representing the qualities applied
- *	@woundBoxes			- int representing the number of active wound boxes a Digimon has - can differ from derivedStats["Wound Boxes"]
+ *	@woundBoxes			- int representing the number of active wound boxes a Digimon has - can differ from derivedStats['Wound Boxes']
  *	@derivedStats		- object recording the four derived stats of a digimon, Wound Boxes, Agility, Body, Brains
  *	@specValues			- object recording the three spec values of a digimon, BIT Value, CPU Value, RAM Value
  *
@@ -36,13 +38,14 @@ class Digimon {
 		this.class = 'Digimon';
 		this.name = name;
 		this.stage = stage;
+		this.stageIndex = DigimonStageOrder.indexOf(this.stage);
 		this.attributeIndex = 0;
 		this.sizeIndex = 0;
 
 		this.digiPoints = DigimonStages[this.stage].startingDP - 5;
 		this.totalDigiPoints = DigimonStages[this.stage].startingDP;
 
-		this.details = "";
+		this.details = '';
 
 		this.digimonFamilies = [];
 		this.digimonTypes = [];
@@ -58,18 +61,25 @@ class Digimon {
 			Agility: 0,
 			SpecValues: 0,
 			BaseMovement: 0,
-			"Flight Speed": 0,
-			"Digging Speed": 0,
-			"Swim Speed": 0,
-			"Wallclimb Speed": 0,
-			"Jump Height": 0,
-			"Teleport Distance": 0
+			'Flight Speed': 0,
+			'Digging Speed': 0,
+			'Swim Speed': 0,
+			'Wallclimb Speed': 0,
+			'Jump Height': 0,
+			'Teleport Distance': 0
 		}
 
 		this.qualities = [];
 		this.qualityRanks = {};
 		this.attackTags = {};
-		this.qualityFlags = {'dataSpecialization': [], 'digizoidArmor': 0, 'digizoidWeapon': 0, 'speedyMax': false};
+		this.qualityFlags = {
+			'dataSpecialization': [], 
+			'digizoidArmor': 0, 
+			'digizoidWeapon': 0, 
+			'speedyMax': false, 
+			'extraMovements': 0,
+			'movementDiscount': this.stageIndex < ChampionIndex
+		};
 
 		this.woundBoxes = 0;
 
@@ -78,7 +88,7 @@ class Digimon {
 
 		this.attacks = [];
 		for (let i = 0; i < DigimonStages[this.stage].attacks; i++) {
-			this.attacks.push({name: null, type: "Melee", tags: [], damage: false});
+			this.attacks.push({name: null, type: 'Melee', tags: [], damage: false});
 		}
 
 		this.buildDerivedStats();
@@ -104,16 +114,43 @@ class Digimon {
 		baseMovement = this.handleRestriction(baseMovement, 'BaseMovement');
 
 		this.movementDetails = {
-			"Movement": baseMovement,
-			"Jump Height": Math.floor(baseMovement/2),
-			"Swim Speed": Math.floor(baseMovement/2)
+			'Movement': baseMovement,
+			'Jump Height': Math.floor(baseMovement/2),
+			'Swim Speed': Math.floor(baseMovement/2)
 		};
 
 		for (let i in this.extraMovementTypes) {
 			var statMod = this.statMods.hasOwnProperty(this.extraMovementTypes[i]) ? this.statMods[this.extraMovementTypes[i]] : 0;
-			if (this.extraMovementTypes[i] === 'Jump Height' && this.qualityFlags['advancedJumper']) {
-				statMod += 5 * this.specValues['CPU Value'];
+
+			switch (this.extraMovementTypes[i]) {
+				case 'Flight Speed':
+					if (this.qualityFlags['Advanced Mobility - Flight']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Flight']];
+					}
+					break;
+				case 'Digging Speed':
+					if (this.qualityFlags['Advanced Mobility - Digger']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Digger']];
+					}
+					break;
+				case 'Swim Speed':
+					if (this.qualityFlags['Advanced Mobility - Swimmer']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Swimmer']];
+					}
+					break;
+				case 'Wallclimb Speed':
+					if (this.qualityFlags['Advanced Mobility - Wallclimber']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Wallclimber']];
+					}
+					break;
+				case 'Jump Height':
+					if (this.qualityFlags['Advanced Mobility - Jumper']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Jumper']];
+					}
+					break;
+				default:
 			}
+
 			this.movementDetails[this.extraMovementTypes[i]] = baseMovement + statMod;
 		}
 	}
@@ -183,7 +220,7 @@ class Digimon {
 					if (DigimonStats.indexOf(statName) !== -1) {
 						if ((this.stats[statName] + modObject[statName]) < 0) {
 							// return string if stat change would lower below 0
-							return "Quality would lower " + statName + " below 0!";
+							return 'Quality would lower ' + statName + ' below 0!';
 						}
 						this.stats[statName] += modObject[statName];
 					} else {
@@ -206,10 +243,10 @@ class Digimon {
 	}
 
 	/**
-	 * Retrieves the Wound Boxes derived stat from the Digimon, necessary as the "Maximum Wound Boxes"
+	 * Retrieves the Wound Boxes derived stat from the Digimon, necessary as the 'Maximum Wound Boxes'
 	 */
 	getWoundBoxesStat () {
-		return this.derivedStats["Wound Boxes"];
+		return this.derivedStats['Wound Boxes'];
 	}
 
 	/**
@@ -322,7 +359,7 @@ class Digimon {
 		var invalidMessage = this.purchaseStageQuality(quality, qualityObject, removeFlag);
 		switch (invalidMessage) {
 			case null:
-				this.setStageArrayProperty("qualities", quality, removeFlag);
+				this.setStageArrayProperty('qualities', quality, removeFlag);
 			case false:
 				let updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
 
@@ -350,7 +387,7 @@ class Digimon {
 				let currentRank = this.qualityRanks[quality];
 				if (this.qualities.indexOf(dependantQualities[i]) !== -1 && requiredRank === currentRank) {
 					// return string if another quality is dependant on this one
-					return "Cannot remove " + quality + " while Digimon has dependant quality: " + dependantQualities[i];
+					return 'Cannot remove ' + quality + ' while Digimon has dependant quality: ' + dependantQualities[i];
 				}
 
 				if (qualityObject.handler === 'hybrid') {
@@ -361,15 +398,15 @@ class Digimon {
 
 					if (hybridQualities >= currentRank) {
 						// return string if the digimon would have less hybrid ranks than hybrid qualities
-						return "Cannot remove " + quality + " rank while Digimon has two hybrid Qualities";
+						return 'Cannot remove ' + quality + ' rank while Digimon has two hybrid Qualities';
 					}
 				}
 
 				if (dependantQualities[i] === 'Teleport' && quality === 'Speedy' && this.qualityRanks['Teleport'] > 0) {		
 					this.checkSpeedyMax(this.qualityRanks[quality], DigimonStages[this.stage].baseMovement + this.statMods['BaseMovement']);
-					if (this.qualityFlags['speedyMax'] === false) {
+					if (this.qualityFlags['speedyMax'] === false && this.qualityRanks['Speedy'] === 3) {
 						this.qualityFlags['speedyMax'] = true;
-						return "Cannot remove Speedy because Teleport requires as many Speedy ranks as to double your Base Movement.";
+						return 'Cannot remove Speedy because Teleport requires either 3 or your maximum ranks in Speedy.';
 					}
 				}
 			}
@@ -379,7 +416,7 @@ class Digimon {
 					case null:
 					case undefined:
 					case 0:
-						return("Cannot remove " + quality + " as it is being used by an attack. Remove the Tag from the attack before removing Quality.");
+						return('Cannot remove ' + quality + ' as it is being used by an attack. Remove the Tag from the attack before removing Quality.');
 					case 1:
 						this.attackTags[qualityObject['attackTag']] -= 1;
 						delete this.attackTags[qualityObject['attackTag']];
@@ -395,12 +432,17 @@ class Digimon {
 					if (this.attacks[i].tags.indexOf('[Armor Piercing]') !== -1 &&
 						this.attacks[i].tags.indexOf('[Certain Strike]') !== -1
 					) {
-						return("Cannot remove " + quality + " while an attack has both [Armor Piercing] and [Certain Strike] applied.");
+						return('Cannot remove ' + quality + ' while an attack has both [Armor Piercing] and [Certain Strike] applied.');
 					}
 				}
 				this.qualityFlags['Signature Move'] = false;
-			} else if (quality === 'Advanced Mobility - Jumper') {
-				this.qualityFlags['advancedJumper'] = false;
+			}
+
+			// Perform this check only after quality cost has been paid to, if necessary, apply the discount for Extra Movement
+			if (qualityObject.handler === 'addMovement' && quality !== 'Teleport' && this.stageIndex >= ChampionIndex) {
+				this.qualityFlags['extraMovements'] -= 1;
+				this.qualityFlags['movementDiscount'] = this.qualityFlags['extraMovements'] > 0;
+				DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], true);
 			}
 
 			this.qualityRanks[quality] -= 1;
@@ -434,12 +476,15 @@ class Digimon {
 					DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost -= 1;
 					break;
 				case 'digizoidArmor':
-					this.qualityFlags['digizoidArmor'] -= 1;
+					this.qualityFlags['digizoidArmor'] = false;
 					this.modifyStats(qualityObject.statMods, false);
 					break;
 				case 'digizoidWeapon':
-					this.qualityFlags['digizoidWeapon'] -= 1;
+					this.qualityFlags['digizoidWeapon'] = false;
 					this.modifyStats(qualityObject.statMods, false);
+					break;
+				case 'advancedMobility':
+					this.qualityFlags[quality] = false;
 					break;
 				default:
 					break;
@@ -452,7 +497,7 @@ class Digimon {
 		}
 		else {
 			if (this.digiPoints < qualityObject.cost) {
-				return "Could not afford Quality: " + quality;
+				return 'Could not afford Quality: ' + quality;
 			} else {
 				var returnMessage = null;
 				switch (qualityObject.handler) {
@@ -489,18 +534,21 @@ class Digimon {
 						DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost += 1;
 						break;
 					case 'digizoidArmor':
-						this.qualityFlags['digizoidArmor'] += 1;
+						this.qualityFlags['digizoidArmor'] = true;
 						this.modifyStats(qualityObject.statMods, true);
 						break;
 					case 'digizoidWeapon':
-						this.qualityFlags['digizoidWeapon'] += 1;
+						this.qualityFlags['digizoidWeapon'] = true;
 						this.modifyStats(qualityObject.statMods, true);
 						break;
+					case 'advancedMobility':
+						this.qualityFlags[quality] = qualityObject.modifier;
+						break;
 					/*case 'note':
-						var noteValue = window.prompt(qualityObject.noteText, "");
+						var noteValue = window.prompt(qualityObject.noteText, '');
 						if (noteValue && noteValue.length > 0) {
 							if (this.details.length > 0) {
-								this.details += "\n";
+								this.details += '\n';
 							}
 							this.details += qualityObject.noteText + noteValue;
 						}
@@ -509,18 +557,20 @@ class Digimon {
 						break;
 				}
 
+				// If the quality is signature move, inform the flags that this Digimon possesses it,
+				// so that armor piercing and certain strike can be applied to the same attack
+				if (quality === 'Signature Move') {
+					this.qualityFlags['Signature Move'] = true;
+				}
+
+				// Increase the number of ranks this Digimon has in this quality
 				if (this.qualityRanks.hasOwnProperty(quality) !== true) {
 					this.qualityRanks[quality] = 1;
 				} else {
 					this.qualityRanks[quality] += 1;
 				}
 
-				if (quality === 'Signature Move') {
-					this.qualityFlags['Signature Move'] = true;
-				} else if (quality === 'Advanced Mobility - Jumper') {
-					this.qualityFlags['advancedJumper'] = true;
-				}
-
+				// Increase the number of attack tags this quality bestows
 				if (qualityObject.hasOwnProperty('attackTag') === true) {
 					if (this.attackTags.hasOwnProperty(qualityObject['attackTag']) !== true) {
 						this.attackTags[qualityObject['attackTag']] = 1;
@@ -529,11 +579,21 @@ class Digimon {
 					}
 				}
 
+				// Pay the cost of the quality
 				this.digiPoints -= qualityObject.cost;
+
+				// Perform this check only after quality cost has been paid to, if necessary reverse the discount for Extra Movement
+				if (qualityObject.handler === 'addMovement' && quality !== 'Teleport' && this.stageIndex >= ChampionIndex) {
+					this.qualityFlags['extraMovements'] += 1;
+					this.qualityFlags['movementDiscount'] = true;
+					DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], true);
+				}
+
 			}
 
 		}
 
+		// Return null to indicate successful completion
 		return null;
 	}
 
@@ -612,14 +672,7 @@ class Digimon {
 	 * Function to be called to update values necessary when this Digimon object is swapped to
 	 */
 	onSwapTo () {
-		let DigimonStageOrder = Object.keys(DigimonStages);
-		let megaOrGreater = DigimonStageOrder.indexOf(this.stage) >= DigimonStageOrder.indexOf('Mega');
-		if (megaOrGreater && DigimonQualitiesDigizoid['Chrome Digizoid Armor'].cost === 1) {
-			DigimonData.digizoidDiscount(true);
-		}
-		else if (!megaOrGreater && DigimonQualitiesDigizoid['Chrome Digizoid Armor'].cost === 0) {
-			DigimonData.digizoidDiscount(false);
-		}
+		DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], this.stageIndex >= ChampionIndex);
 	}
 
 	/**

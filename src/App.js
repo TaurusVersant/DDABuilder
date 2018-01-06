@@ -269,6 +269,17 @@ class App extends React.Component {
 		reader.readAsText(file);
 	}
 
+
+	/**
+	 * Detects an enter key press on the input field and runs the onBlur function for the element
+	 */
+	checkEnter (buttonId, event) {
+		if (event.key === 'Enter') {
+			let createButton = document.getElementById(buttonId);
+			createButton.click();
+		}
+	}
+
 	render () {
 		// humanAgeSelect is used to choose a Human Age in the add Human Modal
 		let humanAgeSelect = [];
@@ -299,14 +310,14 @@ class App extends React.Component {
 					<div className='appModal-content'>
 						<h3>Add Human</h3>
 						<label htmlFor='addHumanName'>Name: </label>
-						<input id='addHumanName' type='text'></input>
+						<input id='addHumanName' type='text' onKeyPress={this.checkEnter.bind(this, 'createHumanButton')}></input>
 						<br/><br/>
-						<label htmlFor='addHumanAge'>Age: </label>
+						<label className='labelHumanAge' htmlFor='addHumanAge'>Age: </label>
 						<select id='addHumanAge' className='labelInput'>
 							{humanAgeSelect}
 						</select>
 						<br/><br/>
-						<button type='button' onClick={this.addHuman.bind(this)}>Create!</button>
+						<button id='createHumanButton' type='button' onClick={this.addHuman.bind(this)}>Create!</button>
 					</div>
 				</div>
 
@@ -314,14 +325,14 @@ class App extends React.Component {
 					<div className='appModal-content'>
 						<h3>Add Digimon</h3>
 						<label htmlFor='addDigimonName'>Name: </label>
-						<input id='addDigimonName' type='text'></input>
+						<input id='addDigimonName' type='text' onKeyPress={this.checkEnter.bind(this, 'createDigimonButton')}></input>
 						<br/><br/>
-						<label htmlFor='addDigimonStage'>Stage: </label>
+						<label className='labelDigimonStage' htmlFor='addDigimonStage'>Stage: </label>
 						<select id='addDigimonStage' className='labelInput'>
 							{digimonStageSelect}
 						</select>
 						<br/><br/>
-						<button type='button' onClick={this.addDigimon.bind(this)}>Create!</button>
+						<button id='createDigimonButton' type='button' onClick={this.addDigimon.bind(this)}>Create!</button>
 					</div>
 				</div>
 

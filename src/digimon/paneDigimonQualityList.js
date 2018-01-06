@@ -62,6 +62,11 @@ class DigimonQualityList extends React.Component {
 	provideQualities (QualityList) {
 		let qualityRow = [];
 		let qualityMap = [];
+		
+		// If the Digimon is Champion or greater and has yet to purchase an Extra Movement, make sure it's discounted
+		/*if (DigimonStageOrder.indexOf(this.props.stage) >= DigimonStageOrder.indexOf('Champion')) {
+			this.props.flags['movementDiscountFlag'] = DigimonData.extraMovementDiscount(this.props.flags['movementDiscountFlag'], this.props.flags['extraMovements']);
+		}*/
 
 		for (let quality in QualityList) {
 			if (QualityList.hasOwnProperty(quality) && this.validateQuality(quality, QualityList[quality]) === true) {
@@ -86,7 +91,7 @@ class DigimonQualityList extends React.Component {
 	/**
 	 * Ensures that the quality being considered can be acquired by this Digimon
 	 */
-	validateQuality (quality, qualityObject) {
+	validateQuality (quality, qualityObject) {		
 		// If the Quality requires a Stage and this Digimon is beneath that Stage, the Quality is not available
 		if (qualityObject.hasOwnProperty('stage') && DigimonStageOrder.indexOf(this.props.stage) < DigimonStageOrder.indexOf(qualityObject.stage)) {
 			return false;
@@ -98,7 +103,7 @@ class DigimonQualityList extends React.Component {
 		}
 
 		// Digimon must have the maximum possible ranks in Speedy to learn Teleport
-		if (quality === 'Teleport' && this.props.flags['speedyMax'] === false) {
+		if (quality === 'Teleport' && this.props.ranks['Speedy'] < 3 && this.props.flags['speedyMax'] === false) {
 			return false;
 		}
 
@@ -113,12 +118,12 @@ class DigimonQualityList extends React.Component {
 		}
 
 		// If the Digimon has two Digizoid Armor qualities already, it cannot purchase more
-		if (qualityObject.handler === 'digizoidArmor' && this.props.flags['digizoidArmor'] === 2) {
+		if (qualityObject.handler === 'digizoidArmor' && this.props.flags['digizoidArmor'] === true) {
 			return false;
 		}
 
 		// If the Digimon has two Digizoid Weapon qualities already, it cannot purchase more
-		if (qualityObject.handler === 'digizoidWeapon' && this.props.flags['digizoidWeapon'] === 2) {
+		if (qualityObject.handler === 'digizoidWeapon' && this.props.flags['digizoidWeapon'] === true) {
 			return false;
 		}
 

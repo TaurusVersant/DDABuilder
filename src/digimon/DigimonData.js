@@ -210,15 +210,15 @@ module.exports.DigimonQualities = {
 module.exports.DigimonQualitiesAdvanced = {
 	"Advanced Mobility - Movement": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon may now take Speedy Ranks to a point where it will triple its Base Movement over Double it.", prereqs: {"Speedy": 1}, unlocks: [], handler: "ability" },
 
-	"Advanced Mobility - Flight": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is not slowed down by even the harshest of winds while it’s in the air and its Flight speed is increased by 3.", prereqs: {"Extra Movement - Flight": 1}, unlocks: [], handler: "addStat", statMods: { "Flight Speed": 3 } },
+	"Advanced Mobility - Flight": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is not slowed down by even the harshest of winds while it’s in the air and its Flight speed is increased by its RAM value.", prereqs: {"Extra Movement - Flight": 1}, unlocks: [], handler: "advancedMobility", modifier: "RAM Value" },
 
-	"Advanced Mobility - Digger": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is now capable of digging through the majority of surfaces without being slowed down. It can dig through softer metals but this is now trated as Difficult Terrain. The Digimon’s Digging speed is increased by 3.", prereqs: {"Extra Movement - Digger": 1}, unlocks: [], handler: "addStat", statMods: { "Digging Speed": 3 } },
+	"Advanced Mobility - Digger": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is now capable of digging through the majority of surfaces without being slowed down. It can dig through softer metals but this is now treated as Difficult Terrain. The Digimon’s Digging speed is increased by its RAM value.", prereqs: {"Extra Movement - Digger": 1}, unlocks: [], handler: "advancedMobility", modifier: "RAM Value" },
 
-	"Advanced Mobility - Swimmer": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is capable of swimming without being slowed down by harsh currents, and its Swimming speed is increased by 3.", prereqs: {"Extra Movement - Swimmer": 1}, unlocks: [], handler: "addStat", statMods: { "Swim Speed": 3 } },
+	"Advanced Mobility - Swimmer": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is capable of swimming without being slowed down by harsh currents, and its Swimming speed is increased by its RAM value.", prereqs: {"Extra Movement - Swimmer": 1}, unlocks: [], handler: "advancedMobility", modifier: "RAM Value" },
 
-	"Advanced Mobility - Wallclimber": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is now capable of walking on ceilings, and cannot be slowed or slip off any wall surfaces. Its Wall Climbing Speed is increased by 3.", prereqs: {"Extra Movement - Wallclimber": 1}, unlocks: [], handler: "addStat", statMods: { "Wallclimb Speed": 3 } },
+	"Advanced Mobility - Wallclimber": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is now capable of walking on ceilings, and cannot be slowed or slip off any normal wall surfaces. Its Wallclimber speed is increased by its RAM value.", prereqs: {"Extra Movement - Wallclimber": 1}, unlocks: [], handler: "advancedMobility", modifier: "RAM Value" },
 
-	"Advanced Mobility - Jumper": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon’s Jump height and Length is increased by its CPU Value times Five.", prereqs: {"Extra Movement - Jumper": 1}, unlocks: [], handler: "addStat", statMods: { "Jump Height": 0 }, multiplier: "CPU Value" },
+	"Advanced Mobility - Jumper": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon’s Jump height and length is increased by its CPU Value.", prereqs: {"Extra Movement - Jumper": 1}, unlocks: [], handler: "advancedMobility", modifier: "CPU Value" },
 
 	"Avoidance": {tags: ["T"], cost: 3, maxRanks: false, desc: "When activating the Agility Quality, the Digimon may now also re-roll any dice which show up as 2’s.", prereqs: {"Agility": 1}, unlocks: [], handler: "ability" },
 
@@ -393,9 +393,23 @@ module.exports.GetQuality = function (quality) {
 	}
 }
 
-module.exports.digizoidDiscount = function (applyDiscount) {
-	let modifier = applyDiscount ? -1 : 1;
-	for (let quality in module.exports.DigimonQualitiesDigizoid) {
-		module.exports.DigimonQualitiesDigizoid[quality].cost += modifier;
+module.exports.extraMovementDiscount = function (restoreCost, championFlag) {
+	let modifier = restoreCost ? 1 : -1;
+
+	if (
+		(championFlag && !restoreCost && module.exports.DigimonQualities['Extra Movement - Flight'].cost === 2) ||
+		(restoreCost && module.exports.DigimonQualities['Extra Movement - Flight'].cost === 1)
+	) {
+		let extraMovements = [
+			'Extra Movement - Flight',
+			'Extra Movement - Digger',
+			'Extra Movement - Swimmer',
+			'Extra Movement - Wallclimber',
+			'Extra Movement - Jumper'
+		];
+
+		for (let index in extraMovements) {
+			module.exports.DigimonQualities[extraMovements[index]].cost += modifier;
+		}
 	}
 }
