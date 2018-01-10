@@ -66,6 +66,7 @@ class Digimon {
 			'Swim Speed': 0,
 			'Wallclimb Speed': 0,
 			'Jump Height': 0,
+			'Jump Length': 0,
 			'Teleport Distance': 0
 		}
 
@@ -116,6 +117,7 @@ class Digimon {
 		this.movementDetails = {
 			'Movement': baseMovement,
 			'Jump Height': Math.floor(baseMovement/2),
+			'Jump Length': Math.floor(baseMovement/2),
 			'Swim Speed': Math.floor(baseMovement/2)
 		};
 
@@ -144,6 +146,11 @@ class Digimon {
 					}
 					break;
 				case 'Jump Height':
+					if (this.qualityFlags['Advanced Mobility - Jumper']) {
+						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Jumper']] * 5;
+					}
+					break;
+				case 'Jump Length':
 					if (this.qualityFlags['Advanced Mobility - Jumper']) {
 						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Jumper']];
 					}
@@ -502,7 +509,13 @@ class Digimon {
 				var returnMessage = null;
 				switch (qualityObject.handler) {
 					case 'addMovement':
-						this.extraMovementTypes.push(qualityObject.movementType);
+						if (Array.isArray(qualityObject.movementType)) {
+							for (let index in qualityObject.movementType) {
+								this.extraMovementTypes.push(qualityObject.movementType[index]);
+							}
+						} else {
+							this.extraMovementTypes.push(qualityObject.movementType);
+						}
 						this.modifyStats(qualityObject.statMods, true);
 						this.buildMovement();
 						break;

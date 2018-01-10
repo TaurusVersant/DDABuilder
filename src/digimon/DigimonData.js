@@ -138,6 +138,8 @@ module.exports.DigimonQualities = {
 
 	"Combat Monster": {tags: ["S"], cost: 2, maxRanks: false, desc: "Whenever the Digimon takes damage, it gains a cumulative bonus to the Damage of its next successful Attack equal to the number of Wound Boxes it has lost since the last successful Attack. For example, if the Digimon takes 4 damage, misses, takes 3 damage, then connects, the Attack deals an additional 7 Damage and then the bonus resets.", unlocks: ["Berserker"], handler: "ability" },
 
+	"Conjurer": {tags: ["T"], cost: 2, maxRanks: false, desc: "The Digimon is capable of summoning objects out of thin air as a Complex Action. The objects may be re-flavored however you want; toys, blocks, just about any object which cannot move on its own. The objects may occupy a number of cubic meters equal to five times the Digimon’s Bit Value. The objects may be summoned, lined up, stacked on top of each other, or simply littered around the field as a Complex Action. The objects count as Obstructing Terrain (this means that it stops attacks from going through, even Area Attacks!). The objects have Wound Boxes equal to three times the Digimon’s Bit Value, and Armor equal to double the Digimon’s Bit Value. They do not have a Dodge Stat. For example, a Champion Digimon with Brains of 30 would have a Bit Value of 5, which would allow it to use Conjurer to create 25 Cubic Meters of objects which sport 15 Wound Boxes and 10 Armor.", unlocks: ["Summoner"], handler: "ability" },
+
 	"Counterattack": {tags: ["T"], cost: 2, maxRanks: false, desc: "Once per combat, if an enemy were to miss with an Attack, you may make a free attack with them as the sole target (you may not use this Quality while also using the attack as an Area Attack). You may choose any Attack on your Attack List otherwise. The target only rolls half of their Dodge Pool in response to the new Attack.", unlocks: ["Counterblow"], handler: "ability" },
 
 	"Data Optimization - Close Combat": {tags: ["S"], cost: 1, maxRanks: false, desc: "The Digimon adds +2 to its Accuracy Pool when using a [Melee] tagged Attack, but takes a -1 penalty to its Accuracy Pool when using a [Ranged] tagged Attack.", unlocks: ["Data Specialization - Fistful of Force", "Data Specialization - Flurry", "Hybrid Drive - Close Combat Adjacent"], handler: "dataOpt" },
@@ -160,7 +162,7 @@ module.exports.DigimonQualities = {
 
 	"Extra Movement - Wallclimber": {tags: ["S"], cost: 1, maxRanks: false, desc: "The Digimon is capable of scaling vertical surfaces, but not on ceilings.", unlocks: ["Advanced Mobility - Wallclimber"], handler: "addMovement", movementType: "Wallclimb Speed" },
 
-	"Extra Movement - Jumper": {tags: ["S"], cost: 1, maxRanks: false, desc: "The Digimon is capable of jumping at a height and length equal to its Movement.", unlocks: ["Advanced Mobility - Jumper"], handler: "addMovement", movementType: "Jump Height" },
+	"Extra Movement - Jumper": {tags: ["S"], cost: 1, maxRanks: false, desc: "The Digimon is capable of jumping at a height and length equal to its Movement.", unlocks: ["Advanced Mobility - Jumper"], handler: "addMovement", movementType: ["Jump Height", "Jump Length"] },
 
 	"Hide in Plain Sight": {tags: ["S"], cost: 2, maxRanks: false, desc: "Anyone attempting to spot the user of the Hide in Plain Sight Quality takes a penalty to their Roll to find them (usually Perception) equal to double the Digimon’s RAM value. The Digimon may become transparent, be capable of disguising itself to be less obvious, or maybe just really good at finding a place to hide.", unlocks: ["Sneak Attack", "Shade Cloak"], handler: "ability" },
 
@@ -218,7 +220,7 @@ module.exports.DigimonQualitiesAdvanced = {
 
 	"Advanced Mobility - Wallclimber": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon is now capable of walking on ceilings, and cannot be slowed or slip off any normal wall surfaces. Its Wallclimber speed is increased by its RAM value.", prereqs: {"Extra Movement - Wallclimber": 1}, unlocks: [], handler: "advancedMobility", modifier: "RAM Value" },
 
-	"Advanced Mobility - Jumper": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon’s Jump height and length is increased by its CPU Value.", prereqs: {"Extra Movement - Jumper": 1}, unlocks: [], handler: "advancedMobility", modifier: "CPU Value" },
+	"Advanced Mobility - Jumper": {tags: ["S"], cost: 3, maxRanks: false, desc: "The Digimon’s Jump height is increased by its CPU Value times Five. The Digimon’s Jump length is increased by its CPU value.", prereqs: {"Extra Movement - Jumper": 1}, unlocks: [], handler: "advancedMobility", modifier: "CPU Value" },
 
 	"Avoidance": {tags: ["T"], cost: 3, maxRanks: false, desc: "When activating the Agility Quality, the Digimon may now also re-roll any dice which show up as 2’s.", prereqs: {"Agility": 1}, unlocks: [], handler: "ability" },
 
@@ -320,7 +322,7 @@ module.exports.DigimonQualitiesDigizoid = {
 	
 	"Chrome Digizoid Weapon": {tags: ["S, T"], cost: 1, maxRanks: false, desc: "The Digimon adds 2 to Accuracy and 1 to Damage when using a [Weapon] Attack.", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Ultimate" },
 	
-	"Black Digizoid Weapon": {tags: ["S, T"], cost: 2, maxRanks: false, desc: "The Digimon gains 2 Accuracy. At the start of each round, roll 1D6. On a roll of 1 or 2, the user gains a bonus 4 Damage for that round. On a roll of 3 or 4, the user gains a bonus 4 Accuracy for that round. On a roll of 5 or 6, the Digimon gains 2 Damage and 2 Accuracy for that round. These bonuses only apply to [Weapon] tagged attacks", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega", statMods: {Accuracy: 2} },
+	"Black Digizoid Weapon": {tags: ["S, T"], cost: 2, maxRanks: false, desc: "The Digimon’s [Weapon] Attacks gains 2 Accuracy. At the start of each round, roll 1D6. On a roll of 1 or 2, the user gains a bonus 4 Damage for that round. On a roll of 3 or 4, the user gains a bonus 4 Accuracy for that round. On a roll of 5 or 6, the Digimon gains 2 Damage and 2 Accuracy for that round.", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega" },
 	
 	"Blue Digizoid Weapon": {tags: ["S, T"], cost: 3, maxRanks: false, desc: "The Digimon’s [Weapon] Attacks gain 2 bonus Accuracy when used and 1 bonus Damage. Additionally they are all treated as if they had an extra rank of Certain Strike (even if the Attack already had Certain Strike).", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega" },
 	
@@ -328,7 +330,7 @@ module.exports.DigimonQualitiesDigizoid = {
 	
 	"Obsidian Digizoid Weapon": {tags: ["S, T"], cost: 3, maxRanks: false, desc: "The Digimon’s [Weapon] Attacks gain 2 bonus Damage when used and 1 bonus Accuracy. Additionally they are all treated as if they had an extra rank of Armor Piercing (even if the Attack already had Armor Piercing).", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega" },
 	
-	"Red Digizoid Weapon": {tags: ["S, T"], cost: 3, maxRanks: false, desc: "The Digimon’s Weapon Attacks gain +7 Damage.", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega" }
+	"Red Digizoid Weapon": {tags: ["S, T"], cost: 3, maxRanks: false, desc: "The Digimon’s [Weapon] Attacks gain +7 Damage.", prereqs: {"Weapon": 1}, unlocks: [], handler: "digizoidWeapon", stage: "Mega" }
 }
 
 /*var handlers = {
