@@ -4,7 +4,7 @@ Character Builder for Digimon Digital Adventures Tabletop System
 This is a static, non-web HTML5 webpage for the creation and maintenance of character profiles (Human and Digimon) in the Digimon Digital Adventures Tabletop System.
 
 To Run:
-1) download the built version here: https://www.dropbox.com/s/j6i5wwzyk499ken/DDA%20Builder.zip
+1) download the built version here: https://www.dropbox.com/s/7ad58gswd5e5hk5/DDA%20Builder%20v1.3.zip
 2) extract to a directory
 3) open index.html in your browser of choice (must be HTML5 compliant and have javascript enabled
 4) this builder does not remember data, so to preserve you must use the save and load buttons to archive characters as json files locally
