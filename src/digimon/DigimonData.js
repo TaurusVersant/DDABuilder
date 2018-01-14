@@ -82,7 +82,7 @@ module.exports.DigimonQualities = {
 
 	"Attack Effect - Knockback (N)": {tags: ["A"], cost: 1, maxRanks: 0, desc: "The target is forcibly pushed away from the user a number of meters equal to the user’s CPU Value. This Effect has no Duration. If the target would be pushed into a solid object such as a wall, use the falling guidelines for the damage it takes. If it would be pushed into a group of enemy Digimon, use the throwing guidelines for the damage each party takes.", unlocks: [], handler: "attack", attackTag: "[Knockback]" },
 
-	"Attack Effect - Taunt (N)": {tags: ["A"], cost: 1, maxRanks: 0, desc: "The target is takes an Accuracy penalty for attacking anyone who is not the user of the Taunt Effect equal to the user’s CPU Value x2 for the duration of this Effect.", unlocks: [], handler: "attack", attackTag: "[Taunt]" },
+	"Attack Effect - Taunt (N)": {tags: ["A"], cost: 1, maxRanks: 0, desc: "The target takes an Accuracy penalty for attacking anyone who is not the user of the Taunt Effect equal to the user’s CPU Value x2 for the duration of this Effect.", unlocks: [], handler: "attack", attackTag: "[Taunt]" },
 
 	"Attack Effect - Poison (N)": {tags: ["A"], cost: 2, maxRanks: 0, desc: "The target takes a set amount of unalterable Wound Box Damage equal to the user’s Bit Value at the end of each round. Poison’s minimum duration is 3 rounds.", unlocks: [], handler: "attack", attackTag: "[Poison]" },
 

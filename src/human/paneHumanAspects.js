@@ -31,15 +31,6 @@ class HumanAspects extends React.Component {
 	}
 
 	/**
-	 * Detects an enter key press on the input field and runs the onBlur function for the element
-	 */
-	checkEnter (event) {
-		if (event.key === 'Enter') {
-			event.target.blur();
-		}
-	}
-
-	/**
 	 * Creates two lists of aspects, for major and minor, for a human
 	 */
 	buildAspectsList (aspectType, aspectLabel, aspectId) {
@@ -48,9 +39,9 @@ class HumanAspects extends React.Component {
 		for (let index in aspects) {
 			aspectsList.push(
 				<p key={index}>
-					<span className='longTag'>{aspectLabel}</span>
-					<input className='longInput' id={aspectId + index} onBlur={this.modifyAspect.bind(this, aspectType, index, false)} onKeyPress={this.checkEnter} defaultValue={aspects[index]} />&nbsp;
-					<button className='roundedButton' onClick={this.modifyAspect.bind(this, aspectType, index, true)}>X</button>
+					<span className='textareaLongTag'>{aspectLabel}</span>
+					<textarea className='aspectTextArea' id={aspectId + index} onBlur={this.modifyAspect.bind(this, aspectType, index, false)} defaultValue={aspects[index]} />
+					<button className='textareaRoundedButton' onClick={this.modifyAspect.bind(this, aspectType, index, true)}>X</button>
 				</p>
 			);
 		}

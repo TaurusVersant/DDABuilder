@@ -77,6 +77,10 @@ div.addCharacterButtons {
 	width: 1000px;
 }
 
+div.tormentBoxes {
+	margin-left: 140px;
+}
+
 span.labelTag {
 	width: 150px;
 	display: inline-block;
@@ -85,12 +89,34 @@ span.labelTag {
 	font-weight: bold;
 }
 
+span.textareaLabelTag {
+	width: 150px;
+	display: inline-block;
+	text-align: center;
+	margin-left: 5px;
+	font-weight: bold;
+	float: left;
+	position: relative;
+	margin-top: 20px;
+}
+
 span.longTag {
 	width: 200px;
 	display: inline-block;
 	text-align: center;
 	margin-left: 5px;
 	font-weight: bold;
+}
+
+span.textareaLongTag {
+	width: 200px;
+	display: inline-block;
+	text-align: center;
+	margin-left: 5px;
+	font-weight: bold;
+	float: left;
+	position: relative;
+	margin-top: 20px;
 }
 
 span.labelValue {
@@ -151,6 +177,16 @@ button.roundedButton {
 	color: red;
 }
 
+button.textareaRoundedButton {
+	border-radius: 20px;
+	font-size: 10px;
+	color: red;
+	position: relative;
+	float: right;
+	margin-right: 40px;
+	margin-top: 20px;
+}
+
 button.aspectButtons {
 	margin-left: 5px;
 }
@@ -163,6 +199,20 @@ textArea.detailsTextArea {
 	margin: 10px;
 	width: 95%;
 	height: 150px;
+}
+
+textArea.tormentTextArea {
+	resize: vertical;
+	margin: 10px;
+	height: 50;
+	width: 750px;
+}
+
+textArea.aspectTextArea {
+	resize: vertical;
+	margin: 10px;
+	height: 50;
+	width: 700px;
 }
 
 table#digimonQualityTable {
@@ -234,10 +284,6 @@ ul.navigation li button {
 	margin: 0 .5em;
 	border: none;
 	background-color: #eeeeee;
-}
-
-ul.navigation li button:hover {
-	margin-top: 2px;
 }
 
 ul.navigation li.selected {

@@ -26,15 +26,6 @@ class HumanTorments extends React.Component {
 
 		this.props.updatePane();
 	}
-
-	/**
-	 * Detects an enter key press on the input field and runs the onBlur function for the element
-	 */
-	checkEnter (event) {
-		if (event.key === 'Enter') {
-			event.target.blur();
-		}
-	}
 	
 	/**
 	 * Refreshes the Pane when a Torment Box of the active Human is checked
@@ -55,12 +46,14 @@ class HumanTorments extends React.Component {
 
 		for (let index in torments) {
 			tormentsList.push(
-				<p key={index}>
-					<span className='labelTag'>{tormentLabel}</span>
-					<input className='medInput' id={tormentId + index} onBlur={this.modifyTorment.bind(this, tormentType, index, false)} onKeyPress={this.checkEnter} defaultValue={torments[index].id} />&nbsp;
-					<button className='roundedButton' onClick={this.modifyTorment.bind(this, tormentType, index, true)}>X</button>
-					{this.generateTormentBoxes(tormentType, index, torments[index].checked, tormentBoxesCount)}
-				</p>
+				<div key={index}>
+					<span className='textareaLabelTag'>{tormentLabel}</span>
+					<textarea className='tormentTextArea' id={tormentId + index} onBlur={this.modifyTorment.bind(this, tormentType, index, false)} defaultValue={torments[index].id} />
+					<button className='textareaRoundedButton' onClick={this.modifyTorment.bind(this, tormentType, index, true)}>X</button>
+					<div className='tormentBoxes'>
+						{this.generateTormentBoxes(tormentType, index, torments[index].checked, tormentBoxesCount)}
+					</div>
+				</div>
 			);
 		}
 
