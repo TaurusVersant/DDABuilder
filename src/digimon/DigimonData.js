@@ -411,8 +411,13 @@ module.exports.AttackGroups = [
 		"[Charm]",
 		"[Weaken]",
 		"[Strengthen]",
-		"[Heal]",
-		"[Regenerate]"
+		"[Shield]",
+		"[Regenerate]",
+		"[Pacify]",
+		"[Exploit]",
+		"[Distract]",
+		"[Vigilance]",
+		"[Swiftness]"
 	]
 ];
 
