@@ -445,6 +445,13 @@ class Digimon {
 				this.qualityFlags['Signature Move'] = false;
 			}
 
+			if (quality === 'Mixed Summoner') {
+				if (this.qualities.indexOf('Summoner') !== -1 && this.qualities.indexOf('Conjurer') !== -1) {
+					return('Cannot remove ' + quality + ' while Digimon still has both Summoner and Conjurer');
+				}
+				this.qualityFlags['Mixed Summoner'] = false;
+			}
+
 			// Perform this check only after quality cost has been paid to, if necessary, apply the discount for Extra Movement
 			if (qualityObject.handler === 'addMovement' && quality !== 'Teleport' && this.stageIndex >= ChampionIndex) {
 				this.qualityFlags['extraMovements'] -= 1;
@@ -480,7 +487,7 @@ class Digimon {
 					break;
 				case 'technician':
 					let pairedQuality = quality === 'Firewall' ? 'Trojan' : 'Firewall';
-					DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost -= 1;
+					DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost = 2;
 					break;
 				case 'digizoidArmor':
 					this.qualityFlags['digizoidArmor'] = false;
@@ -544,7 +551,7 @@ class Digimon {
 						break;
 					case 'technician':
 						let pairedQuality = quality === 'Firewall' ? 'Trojan' : 'Firewall';
-						DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost += 1;
+						DigimonData.DigimonQualitiesAdvanced[pairedQuality].cost = 3;
 						break;
 					case 'digizoidArmor':
 						this.qualityFlags['digizoidArmor'] = true;
@@ -556,6 +563,12 @@ class Digimon {
 						break;
 					case 'advancedMobility':
 						this.qualityFlags[quality] = qualityObject.modifier;
+						break;
+					case 'summoning':
+						let pairedSummonQuality = quality === 'Summoner' ? 'Conjurer' : 'Summoner';
+						if (this.qualityFlags['Mixed Summoner'] !== true && this.qualities.indexOf(pairedSummonQuality) !== -1) {
+							return ("Cannot purchase " + quality + " while Digimon has " + pairedSummonQuality + " without Mixed Summoner");
+						}
 						break;
 					/*case 'note':
 						var noteValue = window.prompt(qualityObject.noteText, '');
@@ -574,6 +587,12 @@ class Digimon {
 				// so that armor piercing and certain strike can be applied to the same attack
 				if (quality === 'Signature Move') {
 					this.qualityFlags['Signature Move'] = true;
+				}
+
+				// If the quality is Mixed Summoner, inform the flags that this DIgimon possesses it,
+				// so that Summoner and Conjurer can be taken together.
+				if (quality === 'Mixed Summoner') {
+					this.qualityFlags['Mixed Summoner'] = true;
 				}
 
 				// Increase the number of ranks this Digimon has in this quality
@@ -686,6 +705,8 @@ class Digimon {
 	 */
 	onSwapTo () {
 		DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], this.stageIndex >= ChampionIndex);
+		DigimonData.DigimonQualitiesAdvanced['Trojan'].cost = this.qualities.indexOf('Firewall') !== -1 ? 3 : 2;
+		DigimonData.DigimonQualitiesAdvanced['Firewall'].cost = this.qualities.indexOf('Trojan') !== -1 ? 3 : 2;
 	}
 
 	/**
