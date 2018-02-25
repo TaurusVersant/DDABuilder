@@ -172,8 +172,8 @@ class Digimon {
 			this.derivedStats['Wound Boxes'] += this.burstIndex * BurstModifier.woundBoxes;
 		}
 
-		this.derivedStats['Agility'] = Math.floor((this.stats.Accuracy + this.stats.Dodge) / 2) + this.statMods['Agility'];
-		this.derivedStats['Body'] = Math.floor((this.stats.Health + this.stats.Damage + this.stats.Armor)/3) + DigimonSizes[this.sizeIndex].bodyBonus + this.statMods['Body'];
+		this.derivedStats['Agility'] = Math.floor((this.stats.Accuracy + this.stats.Dodge) / 2) + this.statMods['Agility'] + DigimonSizes[this.sizeIndex].statBonus['Agility'];
+		this.derivedStats['Body'] = Math.floor((this.stats.Health + this.stats.Damage + this.stats.Armor)/3) + DigimonSizes[this.sizeIndex].statBonus['Body'] + this.statMods['Body'];
 		this.derivedStats['Brains'] = Math.floor(this.stats.Accuracy/2) + DigimonStages[this.stage].brains + this.statMods['Brains'];
 
 		this.specValues['BIT Value'] = Math.floor(this.derivedStats.Brains/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];

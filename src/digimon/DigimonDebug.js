@@ -63,13 +63,15 @@ class DigimonDebug extends React.Component {
 							<th>Area</th>
 							<th>Square Meters</th>
 							<th>Body Bonus</th>
+							<th>Agility Bonus</th>
 							<th>Extra</th>
 						</tr>
 						<tr>
 							<td className='tableRow'>{sizeStats.id}</td>
 							<td className='tableRow'>{sizeStats.area}</td>
 							<td className='tableRow'>{sizeStats.squareMeters}</td>
-							<td className='tableRow'>{sizeStats.bodyBonus}</td>
+							<td className='tableRow'>{sizeStats.statBonus['Body']}</td>
+							<td className='tableRow'>{sizeStats.statBonus['Agility']}</td>
 							<td className='tableRow'>{sizeStats.notes}</td>
 						</tr>
 					</tbody>

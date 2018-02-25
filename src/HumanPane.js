@@ -42,7 +42,7 @@ class HumanPane extends React.Component {
 		this.updateStageField(this.state.human, 'details');
 
 
-		// Update Attacks
+		// Update Aspects
 		let humanMajorAspects = this.state.human.getProperty('majorAspects');
 		let humanMinorAspects = this.state.human.getProperty('minorAspects');
 
@@ -57,6 +57,32 @@ class HumanPane extends React.Component {
 			let minorAspect = document.getElementById('aMinor_' + i);
 			if (minorAspect !== null) {
 				minorAspect.value = humanMinorAspects[i];
+			}
+		}
+		
+		// Update Torments
+		let humanMinorTorments = this.state.human.getProperty('minorTorments');
+		let humanMajorTorments = this.state.human.getProperty('majorTorments');
+		let humanTerribleTorments = this.state.human.getProperty('terribleTorments');
+		
+		for (let i = 0; i < humanMinorTorments.length; i++) {
+			let torment = document.getElementById('tMinor_' + i);
+			if (torment !== null) {
+				torment.value = humanMinorTorments[i].id;
+			}
+		}
+		
+		for (let i = 0; i < humanMajorTorments.length; i++) {
+			let torment = document.getElementById('tMajor_' + i);
+			if (torment !== null) {
+				torment.value = humanMajorTorments[i].id;
+			}
+		}
+		
+		for (let i = 0; i < humanTerribleTorments.length; i++) {
+			let torment = document.getElementById('tTerrible_' + i);
+			if (torment !== null) {
+				torment.value = humanTerribleTorments[i].id;
 			}
 		}
 
