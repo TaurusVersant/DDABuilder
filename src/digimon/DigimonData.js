@@ -94,7 +94,7 @@ module.exports.DigimonQualities = {
 
 	"Attack Effect - Lifesteal (P)": {tags: ["A"], cost: 2, maxRanks: 0, desc: "This Attack heals a number of the user’s Wound Boxes equal to the user’s CPU value. If the Attack deals damage less than the user’s CPU value, it instead heals for that amount instead. However, you may use this Attack as a Complex Action in order to double the Lifesteal Effect’s potency. Lifesteal has no Duration.", unlocks: [], handler: "attack", attackTag: "[Lifesteal]" },
 
-	"Attack Effect - Vigor (P)": {tags: ["A"], cost: 2, maxRanks: 0, desc: "The target gains a bonus to their Dodge and Movement scores equal to the user’s Bit Value for the duration of this Effect.", unlocks: [], handler: "attack", attackTag: "[Vigor]" },
+	"Attack Effect - Vigor (P)": {tags: ["A"], cost: 2, maxRanks: 0, desc: "The target gains a bonus to their Dodge score equal to the user’s Bit Value, and to their Movement score equal to the user’s Bit Value doubled, for the duration of this Effect.", unlocks: [], handler: "attack", attackTag: "[Vigor]" },
 
 	"Attack Effect - Fury (P)": {tags: ["A"], cost: 2, maxRanks: 0, desc: "The target gains a bonus to their Accuracy and Damage scores equal to the user’s Bit value for the duration of this Effect.", unlocks: [], handler: "attack", attackTag: "[Fury]" },
 
