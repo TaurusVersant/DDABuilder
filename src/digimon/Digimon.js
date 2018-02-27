@@ -112,13 +112,13 @@ class Digimon {
 	buildMovement () {
 		var baseMovement = DigimonStages[this.stage].baseMovement + this.statMods['BaseMovement'];
 		this.qualityFlags['speedyMax'] = false;
-		baseMovement = this.handleRestriction(baseMovement, 'BaseMovement');
+		var movement = this.handleRestriction(baseMovement, 'BaseMovement');
 
 		this.movementDetails = {
-			'Movement': baseMovement,
-			'Jump Height': Math.floor(baseMovement/2),
-			'Jump Length': Math.floor(baseMovement/2),
-			'Swim Speed': Math.floor(baseMovement/2)
+			'Movement': movement,
+			'Jump Height': Math.floor(movement/2),
+			'Jump Length': Math.floor(movement/2),
+			'Swim Speed': Math.floor(movement/2)
 		};
 
 		for (let i in this.extraMovementTypes) {
@@ -155,10 +155,13 @@ class Digimon {
 						statMod += this.specValues[this.qualityFlags['Advanced Mobility - Jumper']];
 					}
 					break;
+				case 'Teleport Distance':
+					statMod += baseMovement - movement;
+					break;
 				default:
 			}
 
-			this.movementDetails[this.extraMovementTypes[i]] = baseMovement + statMod;
+			this.movementDetails[this.extraMovementTypes[i]] = movement + statMod;
 		}
 	}
 
