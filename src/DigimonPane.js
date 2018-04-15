@@ -448,7 +448,7 @@ class DigimonPane extends React.Component {
 					<div className='secondColumn'>
 						<p><u>Derived Stats</u></p>
 						<CharacterStats stats={this.state.digimon.getProperty('derivedStats')} />
-						<p><u>Spec Stats</u></p>
+						<p><u>Spec Stats</u><small><br/>RAM (Agility) / CPU (Body) / BIT (Brains)</small></p>
 						<CharacterStats stats={this.state.digimon.getProperty('specValues')} />
 					</div>
 				</div>

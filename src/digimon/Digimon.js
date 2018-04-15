@@ -179,9 +179,9 @@ class Digimon {
 		this.derivedStats['Body'] = Math.floor((this.stats.Health + this.stats.Damage + this.stats.Armor)/3) + DigimonSizes[this.sizeIndex].statBonus['Body'] + this.statMods['Body'];
 		this.derivedStats['Brains'] = Math.floor(this.stats.Accuracy/2) + DigimonStages[this.stage].brains + this.statMods['Brains'];
 
-		this.specValues['BIT Value'] = Math.floor(this.derivedStats.Brains/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];
-		this.specValues['CPU Value'] = Math.floor(this.derivedStats.Body/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];
 		this.specValues['RAM Value'] = Math.floor(this.derivedStats.Agility/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];
+		this.specValues['CPU Value'] = Math.floor(this.derivedStats.Body/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];
+		this.specValues['BIT Value'] = Math.floor(this.derivedStats.Brains/10) + DigimonStages[this.stage].specValues + this.statMods['SpecValues'];
 
 		this.specValues['BIT Value'] = this.handleRestriction(this.specValues['BIT Value'], 'BIT Value');
 		this.specValues['CPU Value'] = this.handleRestriction(this.specValues['CPU Value'], 'CPU Value');
