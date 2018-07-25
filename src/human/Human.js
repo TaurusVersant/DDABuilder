@@ -179,6 +179,15 @@ class Human {
 	changeSkill (skillName, skillChange) {
 		this.changeStat('skill', skillName, skillChange, this.skills, 'maxSkill', 'skillSpent');
 	}
+	
+	getStatCost (statType, statValue, statDirection) {
+		if (statDirection == '-') {
+			return statType == 'skill' ? statValue : statValue*2;
+		}
+
+		statValue += 1;
+		return statType == 'skill' ? statValue : statValue*2;
+	}
 
 	/**
 	 * Modifies the statSet (attribute or skill) in the direction indicated by statChange
@@ -186,17 +195,23 @@ class Human {
 	 */
 	changeStat (statType, statName, statChange, statSet, maxFlag, spentFlag) {
 		let updateHealth = false;
-		let statCap = this.flags.creationComplete ? HumanAges[this.age].finalCap : HumanAges[this.age].startingCap;
+		let statCap = HumanAges[this.age].startingCap;
+		let cost = 1
+		
+		if (this.flags.creationComplete) {
+			statCap = HumanAges[this.age].finalCap;
+			cost = this.getStatCost(statType, statSet[statName], statChange);
+		}
 
 		if (statChange === '-' && statSet[statName] > 0) {
 			if (statSet[statName] === statCap) {
 				this.flags[maxFlag] = false;
 			}
 
-			this.flags[spentFlag] -= 1;
+			this.flags[spentFlag] -= cost;
 
 			statSet[statName] -= 1;
-			this.creationPoints += 1;
+			this.creationPoints += cost;
 
 			updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
 
@@ -204,7 +219,7 @@ class Human {
 		}
 		else if (
 			statChange === '+' &&
-			this.creationPoints &&
+			this.creationPoints >= cost &&
 			statSet[statName] < statCap &&
 			(this.flags.creationComplete === true || this.flags[spentFlag] < HumanAges[this.age].areaCap)
 		) {
@@ -213,10 +228,10 @@ class Human {
 			} else {
 				updateHealth = this.woundBoxes === this.derivedStats['Wound Boxes'];
 
-				this.creationPoints -= 1;
+				this.creationPoints -= cost;
 				statSet[statName] += 1;
 
-				this.flags[spentFlag] += 1;
+				this.flags[spentFlag] += cost;
 
 				if (statSet[statName] === HumanAges[this.age].startingCap) {
 					this.flags[maxFlag] = true;
