@@ -131,9 +131,9 @@ class Human {
 
 		this.derivedStats['Movement'] = this.attributes['Agility'] + this.skills['Survival'];
 		this.derivedStats['Accuracy'] = this.attributes['Agility'] + this.skills['Fight'];
+		this.derivedStats['Damage'] = this.attributes['Body'] + this.skills['Fight'];
 		this.derivedStats['Dodge'] = this.attributes['Agility'] + this.skills['Dodge'];
 		this.derivedStats['Armor'] = this.attributes['Body'] + this.skills['Endurance'];
-		this.derivedStats['Damage'] = this.attributes['Body'] + this.skills['Fight'];
 	}
 
 	/**
@@ -181,12 +181,12 @@ class Human {
 	}
 	
 	getStatCost (statType, statValue, statDirection) {
-		if (statDirection == '-') {
-			return statType == 'skill' ? statValue : statValue*2;
+		if (statDirection === '-') {
+			return statType === 'skill' ? statValue : statValue*2;
 		}
 
 		statValue += 1;
-		return statType == 'skill' ? statValue : statValue*2;
+		return statType === 'skill' ? statValue : statValue*2;
 	}
 
 	/**
