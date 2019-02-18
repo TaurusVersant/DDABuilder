@@ -731,12 +731,12 @@ class Digimon {
 			this[property] = digimonObject[property];
 		}
 
-		if (Number.isInteger(digimonObject.burstIndex)) {
+		/*if (Number.isInteger(digimonObject.burstIndex)) {
 			this.burstIndex = 0;
 			for (let i = 0; i < digimonObject.burstIndex; i++) {
 				this.modifyBurstIndex(true);
 			}
-		}
+		}*/
 	}
 
 	/**
