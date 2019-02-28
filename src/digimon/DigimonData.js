@@ -336,7 +336,9 @@ module.exports.DigimonQualitiesAdvanced = {
 
 	"You Won’t Like Me When I’m Angry": {tags: ["S"], cost: 3, maxRanks: false, desc: "Double the number of dice used to track the Digimon’s Rage Meter (2 to 4). This means the Digimon’s Rage starts at 4 and can go as high as 24. Adjust all calculations for the Rage mechanics accordingly.", prereqs: {"Boiling Blood": 1}, unlocks: [], handler: "ability" },
 
-	"Burst Power": {tags: ["T"], cost: 0, maxRanks: false, desc: "Burst Power is activated as a Simple Action. When activated, the Digimon gains +4 to all Stats for 4 Rounds. At the end of the 4th round, the Digimon loses 1 point in each Stat per Round. So, if the Digimon maintains Burst Power for 7 rounds, they would be at a -3 in all Stats. Burst Power is Deactivated as a Complex Action. Once Burst Power has been activated, the Digimon cannot activate it again until the start of the next Combat session.", prereqs: {}, unlocks: [], handler: "ability", stage: "Burst" }
+	"Burst Power": {tags: ["T"], cost: 0, maxRanks: false, desc: "Burst Power is activated as a Simple Action. When activated, the Digimon gains +4 to all Stats for 4 Rounds. At the end of the 4th round, the Digimon loses 1 point in each Stat per Round. So, if the Digimon maintains Burst Power for 7 rounds, they would be at a -3 in all Stats. Burst Power is Deactivated as a Complex Action. Once Burst Power has been activated, the Digimon cannot activate it again until the start of the next Combat session.", prereqs: {}, unlocks: [], handler: "ability", stage: "Burst" },
+	
+	"Armor Digimon": {tags: ["S"], cost: 0, maxRanks: false, desc: "This trait unlocks purchase of all Digizoid Qualities regardless of Digimon Stage.", prereqs: {}, unlocks: [], handler: "ability" },
 }
 
 module.exports.DigimonQualitiesDigizoid = {

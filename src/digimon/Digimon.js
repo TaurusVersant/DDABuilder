@@ -79,7 +79,8 @@ class Digimon {
 			'digizoidWeapon': 0, 
 			'speedyMax': false, 
 			'extraMovements': 0,
-			'movementDiscount': this.stageIndex < ChampionIndex
+			'movementDiscount': this.stageIndex < ChampionIndex,
+			'armorStage': false,
 		};
 
 		this.woundBoxes = 0;
@@ -454,6 +455,10 @@ class Digimon {
 				}
 				this.qualityFlags['Mixed Summoner'] = false;
 			}
+			
+			if (quality === 'Armor Digimon') {
+				this.qualityFlags['armorStage'] = false;
+			}
 
 			// Perform this check only after quality cost has been paid to, if necessary, apply the discount for Extra Movement
 			if (qualityObject.handler === 'addMovement' && quality !== 'Teleport' && this.stageIndex >= ChampionIndex) {
@@ -585,7 +590,11 @@ class Digimon {
 					default:
 						break;
 				}
-
+			
+				if (quality === 'Armor Digimon') {
+					this.qualityFlags['armorStage'] = true;
+				}
+				
 				// If the quality is signature move, inform the flags that this Digimon possesses it,
 				// so that armor piercing and certain strike can be applied to the same attack
 				if (quality === 'Signature Move') {

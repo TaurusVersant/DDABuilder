@@ -93,7 +93,9 @@ class DigimonQualityList extends React.Component {
 	 */
 	validateQuality (quality, qualityObject) {		
 		// If the Quality requires a Stage and this Digimon is beneath that Stage, the Quality is not available
-		if (qualityObject.hasOwnProperty('stage') && DigimonStageOrder.indexOf(this.props.stage) < DigimonStageOrder.indexOf(qualityObject.stage)) {
+		if ((qualityObject.handler === 'digizoidWeapon' || qualityObject.handler === 'digizoidArmor') && this.props.flags.armorStage) {
+		}
+		else if (qualityObject.hasOwnProperty('stage') && DigimonStageOrder.indexOf(this.props.stage) < DigimonStageOrder.indexOf(qualityObject.stage)) {
 			return false;
 		}
 
