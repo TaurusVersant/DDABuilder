@@ -25213,6 +25213,8 @@ var Digimon = function () {
 				this[property] = digimonObject[property];
 			}
 
+			DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], this.stageIndex >= ChampionIndex);
+
 			/*if (Number.isInteger(digimonObject.burstIndex)) {
    	this.burstIndex = 0;
    	for (let i = 0; i < digimonObject.burstIndex; i++) {

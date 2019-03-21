@@ -739,6 +739,8 @@ class Digimon {
 		for (let property in digimonObject) {
 			this[property] = digimonObject[property];
 		}
+		
+		DigimonData.extraMovementDiscount(this.qualityFlags['movementDiscount'], this.stageIndex >= ChampionIndex);
 
 		/*if (Number.isInteger(digimonObject.burstIndex)) {
 			this.burstIndex = 0;
